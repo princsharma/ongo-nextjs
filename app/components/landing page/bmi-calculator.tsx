@@ -94,25 +94,25 @@ export default function BMICalculator() {
   return (
     <div className="bmi-wrap wl-section">
         <div className="wl-hero-right">
-          <p className="wl-eyebrow">Doctor-Guided GLP-1 Care</p>
+          <p className="wl-eyebrow">CHECK YOUR HEALTH STATUS</p>
           <h1 className="wl-headline">
-            Weight loss{" "}
-            <span className="wl-headline-accent">made easy</span>
+            Know your BMI.{" "}
+            <span className="wl-headline-accent">Understand what it means</span>
             <br />
-            with personalized care
+            for your weight.
           </h1>
 
           <div className="wl-image-grid">
             <div className="wl-image-card">
               <img
-                src="assets/girl-image.png"
+                src="assets/bmi-a.png"
                 alt="Happy patient after weight loss"
                 className="wl-grid-image"
               />
             </div>
             <div className="wl-image-card">
               <img
-                src="assets/girl-image.png"
+                src="assets/bmi-b.png"
                 alt="GLP-1 injection demonstration"
                 className="wl-grid-image"
               />
@@ -121,14 +121,14 @@ export default function BMICalculator() {
 
           <div className="wl-cta">
             <h2 className="wl-cta-heading">
-              A smarter approach to weight loss, built around you
+             Your BMI is just the start.
             </h2>
             <p className="wl-cta-body">
-              Find the right GLP-1 medication with the confidence that comes
-              from knowing it is doctor-approved and budget-friendly.
+             BMI helps you understand where you stand, but it doesn't tell the full story. 
+Get a clearer picture of your health and what steps can actually work for you.
             </p>
             <a href="#get-started" className="wl-cta-button">
-              Get Started
+              See what works for your body
             </a>
           </div>
         </div>

@@ -1010,7 +1010,9 @@ section {
   display: flex;
   gap: 40px;
 }
- 
+ .bmi-wrap .wl-hero-right {
+  width: 40%;
+ }
 /* ── Card ────────────────────────────────────── */
 .bmi-card {
   background: var(--warm-white);
