@@ -7,6 +7,7 @@ import HowItWorks from "./components/landing page/howitworks";
 import Medications from "./components/landing page/medications";
 import Scrollingbar from "./components/landing page/scrollingbar";
 import Glplanding from "./components/landing page/GlpLanding";
+import BMICalculator from "./components/landing page/bmi-calculator";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Hero />
       <Scrollingbar />
       <Glplanding />
+      <BMICalculator />
       {/* <Benefits /> */}
       <Medications />
       <HowItWorks />

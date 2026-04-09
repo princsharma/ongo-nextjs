@@ -1,24 +1,25 @@
+"use client"
 export default function Hero() {
   const cards = [
   {
     title: "Weight Loss",
-    defaultImg: "assets/fat-woman 1.png",
+    defaultImg: "assets/fat-women1.png",
     hoverImg: "assets/slim-girl 1.png",
   },
   {
     title: "Peptides & Longevity",
-    defaultImg: "assets/fat-woman 1.png",
-    hoverImg: "assets/slim-girl 1.png",
+    defaultImg: "assets/noglow-women.png",
+    hoverImg: "assets/glow-women.png",
   },
   {
     title: "Men’s Health",
-    defaultImg: "assets/fat-woman 1.png",
-    hoverImg: "assets/slim-girl 1.png",
+    defaultImg: "assets/fat-men.png",
+    hoverImg: "assets/slim-men.png",
   },
   {
     title: "Women’s Health",
-    defaultImg: "assets/fat-woman 1.png",
-    hoverImg: "assets/slim-girl 1.png",
+    defaultImg: "assets/unhappy-women.png",
+    hoverImg: "assets/happy-women.png",
   },
 ];
   return (
