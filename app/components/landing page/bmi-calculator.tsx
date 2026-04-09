@@ -96,10 +96,9 @@ export default function BMICalculator() {
         <div className="wl-hero-right">
           <p className="wl-eyebrow">CHECK YOUR HEALTH STATUS</p>
           <h1 className="wl-headline">
-            Know your BMI.{" "}
-            <span className="wl-headline-accent">Understand what it means</span>
+            Know your {" "}
+            <span className="wl-headline-accent">BMI.</span>
             <br />
-            for your weight.
           </h1>
 
           <div className="wl-image-grid">

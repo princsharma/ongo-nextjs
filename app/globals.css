@@ -197,7 +197,6 @@ body::before {
   color: var(--warm-white);
   text-align: center;
   padding: 140px 20px 50px;
-  /* height: 100vh; */
 }
 .bg_big_text {
      color: #ffffff1a;
@@ -243,17 +242,29 @@ body::before {
 .card-wrapper {
   background: rgba(255, 252, 249, 0.2);
   border-radius: 22px;
-  max-width: 1100px;
+  /* max-width: 1100px; */
   margin: 60px auto 0;
   padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
   gap: 20px;
 }
 
 /* CARD */
 .card {
-  background: var(--sand-light);
+  background: radial-gradient(
+      180px circle at var(--x, 50%) var(--y, 50%),
+      rgba(217, 119, 6, 0.65),        /* amber */
+      rgba(194, 98, 43, 0.45) 25%,    /* terracotta */
+      rgba(0, 0, 0, 0) 60%
+    ),
+    linear-gradient(
+      135deg,
+      #a56a2a,
+      #1c1208
+    );
+
+  transition: all 0.3s ease;
+  box-shadow: 0 12px 35px rgba(28, 18, 8, 0.5);
   border-radius: 18px;
   padding: 20px;
   cursor: pointer;
@@ -261,15 +272,33 @@ body::before {
   overflow: hidden;
   transition: all 0.4s ease;
   border: 1px solid var(--border);
+  width: 100%;
 }
 
-/* Hover lift */
 .card:hover {
-  /* transform: translateY(-5px); */
-  background: var(--warm-white);
-  
-}
+  background: radial-gradient(
+      200px circle at var(--x, 50%) var(--y, 50%),
+      rgba(245, 158, 11, 0.9),        /* amber-light */
+      rgba(194, 98, 43, 0.55) 30%,    /* terracotta */
+      rgba(0, 0, 0, 0) 65%
+    ),
+    linear-gradient(
+      135deg,
+      #2a1a08,
+      #120b04
+    );
 
+}
+.top_bar_card {
+  position: absolute;
+  bottom: 0;
+  padding: 10px 20px;
+  background-color: var(--sand-light);
+  color: white;
+  width: 100%;
+  left: 0;
+  z-index: 11;
+}
 /* IMAGE WRAPPER */
 .card-image {
   height: 180px;
@@ -307,24 +336,6 @@ body::before {
   opacity: 1;
 }
 
-/* ✨ GLOW EFFECT (USING YOUR COLORS) */
-.card-image::before {
-  content: "";
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(
-    circle,
-    var(--amber-light) 0%,
-    var(--amber) 40%,
-    transparent 70%
-  );
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.4s ease;
-  border-radius: 50%;
-  z-index: 1;
-}
 
 /* 🔥 SHOW GLOW ON HOVER */
 .card:hover .card-image::before {
@@ -373,13 +384,19 @@ body::before {
     font-size: 36px;
   }
 .card-wrapper {
-  grid-template-columns: repeat(1, 1fr);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
   .card {
     min-width: 180px;
   }
 }
-
+@media (max-width: 575px) {
+.card-wrapper {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+}
+}
 @media (max-width: 480px) {
   .hero {
     padding: 60px 15px 100px;
@@ -1008,6 +1025,7 @@ section {
   padding: 2rem 1rem;
   color: var(--text-dark);
   display: flex;
+  align-items: center;
   gap: 40px;
 }
  .bmi-wrap .wl-hero-right {
