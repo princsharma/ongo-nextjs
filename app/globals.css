@@ -199,7 +199,7 @@ body::before {
   padding: 140px 20px 250px;
   /* background-image: url('/assets/hero-bg.jfif'); */
     background-image: 
-    linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.2)),
+    
     url('/assets/hero-bg.jfif');
   background-size: cover;
   background-position: center;
