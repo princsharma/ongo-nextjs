@@ -3,23 +3,23 @@ export default function Hero() {
   const cards = [
   {
     title: "Weight Loss",
-    defaultImg: "assets/fat-women1.png",
-    hoverImg: "assets/slim-girl 1.png",
+    defaultImg: "assets/fat-women1.webp",
+    hoverImg: "assets/slim-girl 1.webp",
   },
   {
     title: "Peptides & Longevity",
-    defaultImg: "assets/noglow-women.png",
-    hoverImg: "assets/glow-women.png",
+    defaultImg: "assets/noglow-women.webp",
+    hoverImg: "assets/glow-women.webp",
   },
   {
     title: "Men’s Health",
-    defaultImg: "assets/fat-men.png",
-    hoverImg: "assets/slim-men.png",
+    defaultImg: "assets/fat-men.webp",
+    hoverImg: "assets/slim-men.webp",
   },
   {
     title: "Women’s Health",
-    defaultImg: "assets/unhappy-women.png",
-    hoverImg: "assets/happy-women.png",
+    defaultImg: "assets/unhappy-women.webp",
+    hoverImg: "assets/happy-women.webp",
   },
 ];
   return (

@@ -372,7 +372,9 @@ body::before {
   .hero h1 {
     font-size: 36px;
   }
-
+.card-wrapper {
+  grid-template-columns: repeat(1, 1fr);
+}
   .card {
     min-width: 180px;
   }
