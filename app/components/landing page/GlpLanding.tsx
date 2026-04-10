@@ -26,14 +26,14 @@ export default function WeightLossSection() {
           <div className="wl-image-grid">
             <div className="wl-image-card">
               <img
-                src="assets/girl-image.png"
+                src="assets/glp-b.png"
                 alt="Happy patient after weight loss"
                 className="wl-grid-image"
               />
             </div>
             <div className="wl-image-card">
               <img
-                src="assets/girl-image.png"
+                src="assets/glp-a.png"
                 alt="GLP-1 injection demonstration"
                 className="wl-grid-image"
               />
@@ -57,7 +57,7 @@ export default function WeightLossSection() {
         <div className="wl-hero-left">
           <div className="wl-product-image-wrap">
             <img
-              src="assets/liraglutide.webp"
+              src="assets/glp-c.png"
               alt="GLP-1 prescription medication"
               className="wl-product-image"
             />
@@ -91,7 +91,7 @@ export default function WeightLossSection() {
       </div>
 
       {/* ── Features Strip ── */}
-      <div className="wl-features-strip">
+      {/* <div className="wl-features-strip">
         <div className="wl-feature-card">
           <div className="wl-feature-image-wrap">
             <img
@@ -133,7 +133,7 @@ export default function WeightLossSection() {
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* ── Disclaimer ── */}
       <p className="wl-disclaimer">

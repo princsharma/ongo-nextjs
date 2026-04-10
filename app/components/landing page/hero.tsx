@@ -32,9 +32,9 @@ export default function Hero() {
       </div>
       <div className="hero-top">Join 500,000+ patients</div>
 
-      <h1>
+      <h1 className="redefined-text">
         Healthcare, <br />
-        <span>redefined</span> for real life.
+        <span>R</span><span>e</span><span>d</span><span>e</span><span>f</span><span>i</span><span>n</span><span>e</span><span>d</span> for real life.
       </h1>
 
       <p>
