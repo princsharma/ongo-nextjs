@@ -1,4 +1,4 @@
-/* @import "tailwindcss"; */
+@import "tailwindcss";
 
 :root {
   --background: #ffffff;
@@ -1769,3 +1769,131 @@ section {
     grid-template-columns: 1fr;
   }
 }
+
+
+
+/* onboarding flow css */
+
+ .om-scene {
+          position: fixed; inset: 0; z-index: 999;
+        background: rgba(0, 0, 0, 0.35);
+  /* glass feel */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+          display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
+        }
+        .om-card {
+          background: #FFFCF9; border-radius: 28px;
+          border: 1.5px solid #EDD9C0; width: 100%; max-width: 400px;
+          box-shadow: 0 24px 64px rgba(0,0,0,.35), 0 4px 16px rgba(0,0,0,.2);
+          padding: 2rem 1.75rem 1.75rem;
+          display: flex; flex-direction: column; align-items: center;
+          text-align: center; position: relative;
+        }
+        .om-close {
+          position: absolute; top: 14px; right: 14px;
+          width: 28px; height: 28px; border-radius: 50%;
+          background: #FDF8F3; border: 1px solid #EDD9C0;
+          cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .om-close:hover { background: #EDD9C0; }
+        .om-dots { display: flex; gap: 5px; margin-bottom: 1.75rem; }
+        .om-dot { height: 4px; border-radius: 4px; background: #EDD9C0; transition: all .3s; }
+        .om-dot.active { background: #D97706; width: 22px !important; }
+        .om-dot.done { background: #C2622B; }
+        .om-icon {
+          width: 64px; height: 64px; border-radius: 18px;
+          background: #FEF3C7; border: 1.5px solid #EDD9C0;
+          display: flex; align-items: center; justify-content: center; margin-bottom: 1.4rem;
+        }
+        .om-badge {
+          font-size: 10px; font-weight: 700; letter-spacing: .1em;
+          text-transform: uppercase; color: #D97706; margin-bottom: .45rem;
+        }
+        .om-title {
+          font-size: 1.45rem; font-weight: 800; color: #1C1208;
+          line-height: 1.2; letter-spacing: -.025em; margin-bottom: .65rem;
+        }
+        .om-title-grad {
+          background: linear-gradient(90deg, #D97706, #C2622B);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .om-sub {
+          font-size: .875rem; color: #5C4A2A; line-height: 1.6;
+          max-width: 280px; margin-bottom: 1.5rem;
+        }
+        .om-privacy {
+          width: 100%; background: #FDF8F3; border: 1px solid #EDD9C0;
+          border-radius: 16px; padding: .75rem 1rem; margin-bottom: 1.5rem; text-align: left;
+        }
+        .om-privacy-row {
+          display: flex; align-items: flex-start; gap: 9px;
+          padding: 7px 0; font-size: .85rem; color: #5C4A2A;
+        }
+        .om-privacy-row + .om-privacy-row { border-top: 1px solid #EDD9C0; }
+        .om-tick {
+          flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
+          background: linear-gradient(135deg, #F59E0B, #C2622B);
+          display: flex; align-items: center; justify-content: center;
+        }
+        .om-upload {
+          width: 100%; border: 2px dashed #EDD9C0; border-radius: 18px;
+          padding: 1.75rem 1rem; background: #FDF8F3; cursor: pointer;
+          margin-bottom: 1.5rem; display: flex; flex-direction: column;
+          align-items: center; gap: 9px; transition: border-color .2s;
+        }
+        .om-upload:hover { border-color: #D97706; }
+        .om-upload-icon {
+          width: 42px; height: 42px; border-radius: 12px;
+          background: #FEF3C7; border: 1.5px solid #EDD9C0;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .om-loader { width: 100%; margin-bottom: 1.5rem; }
+        .om-track {
+          width: 100%; height: 7px; background: #FDF8F3;
+          border: 1px solid #EDD9C0; border-radius: 99px; overflow: hidden;
+        }
+        .om-fill {
+          height: 100%; border-radius: 99px;
+          background: linear-gradient(90deg, #F59E0B, #C2622B); transition: width .05s linear;
+        }
+        .om-loader-row {
+          display: flex; justify-content: space-between; margin-top: 7px;
+        }
+        .om-loader-lbl { font-size: .78rem; color: #5C4A2A; }
+        .om-loader-pct { font-size: .78rem; font-weight: 700; color: #C2622B; }
+        .om-compare { width: 100%; border-radius: 20px; overflow: hidden; border: 1.5px solid #EDD9C0; margin-bottom: 1.5rem; background: #FDF8F3; }
+        .om-compare-top {
+          background: linear-gradient(135deg, #FEF3C7, #FDE8C8, #F5CBA7);
+          padding: 1.5rem 1rem 1.25rem;
+          display: flex; align-items: flex-end; justify-content: center; gap: 1.5rem;
+        }
+        .om-fig { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .om-fig-lbl { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #5C4A2A; }
+        .om-fig-lbl.after { color: #C2622B; font-weight: 800; }
+        .om-arrow-circle {
+          width: 32px; height: 32px; border-radius: 50%;
+          background: linear-gradient(135deg, #F59E0B, #C2622B);
+          display: flex; align-items: center; justify-content: center; margin-bottom: 28px; flex-shrink: 0;
+        }
+        .om-stats { display: flex; padding: .85rem .75rem; gap: .5rem; }
+        .om-stat { flex: 1; background: white; border-radius: 12px; border: 1px solid #EDD9C0; padding: .6rem .7rem; text-align: left; }
+        .om-stat-val { font-size: 1.05rem; font-weight: 800; color: #C2622B; }
+        .om-stat-key { font-size: .68rem; color: #5C4A2A; margin-top: 2px; line-height: 1.3; }
+        .om-cta {
+          width: 100%; padding: .9rem; border: none; border-radius: 14px; cursor: pointer;
+          background: linear-gradient(100deg, #F59E0B 0%, #D97706 45%, #C2622B 100%);
+          color: #fff; font-size: .95rem; font-weight: 700;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          box-shadow: 0 4px 18px rgba(194,98,43,.38);
+          transition: transform .15s, box-shadow .15s; margin-bottom: .75rem;
+        }
+        .om-cta:hover { transform: translateY(-1px); box-shadow: 0 7px 24px rgba(194,98,43,.48); }
+        .om-cta:active { transform: scale(.98); }
+        .om-cta:disabled { opacity: .45; cursor: default; transform: none; box-shadow: none; }
+        .om-arr {
+          width: 18px; height: 18px; border-radius: 50%;
+          background: rgba(255,255,255,.25);
+          display: flex; align-items: center; justify-content: center; font-size: 11px;
+        }
+        .om-fn { font-size: .72rem; color: #5C4A2A; opacity: .6; }
