@@ -639,3 +639,43 @@
   font-size: 12px;
   margin-top: 6px;
 }
+
+/* GOAL GROUP */
+.ob-goal-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* GOAL BUTTON */
+.ob-goal-btn {
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* HOVER */
+.ob-goal-btn:hover {
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+/* SELECTED STATE */
+.ob-goal-btn.selected {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+/* ACTIVE CLICK */
+.ob-goal-btn:active {
+  transform: scale(0.96);
+}

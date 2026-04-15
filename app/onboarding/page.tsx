@@ -25,6 +25,7 @@ export default function Onboarding() {
     currentWeight: "",
     goalWeight: "",
     photo: null,
+    goals: [] as string[],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -114,7 +115,7 @@ export default function Onboarding() {
       )}
 
       {step === 3 && <Step3 next={submit} />}
-      {step === 4 && <Step4 />}
+      {step === 4 && <Step4 form={form} />}
     </>
   );
 }

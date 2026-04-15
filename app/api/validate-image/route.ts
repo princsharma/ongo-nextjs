@@ -8,7 +8,7 @@ export async function POST(req: Request) {
       throw new Error("No image URL provided");
     }
 
-    // ✅ Get base64 + correct mime type
+    // ✅ Convert image → base64 (REQUIRED for this endpoint)
     const { base64, mimeType } = await fetchImageAsBase64(imageUrl);
 
     const response = await fetch(
@@ -22,7 +22,6 @@ export async function POST(req: Request) {
           contents: [
             {
               parts: [
-                // 🔥 IMAGE FIRST (IMPORTANT)
                 {
                   inline_data: {
                     mime_type: mimeType,
@@ -31,7 +30,9 @@ export async function POST(req: Request) {
                 },
                 {
                   text: `
-Analyze this image and return ONLY JSON:
+Analyze this image carefully.
+
+Return STRICT JSON only. No explanation, no markdown.
 
 {
   "peopleCount": number,
@@ -45,8 +46,8 @@ Analyze this image and return ONLY JSON:
             },
           ],
           generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 200,
+            temperature: 0,
+            maxOutputTokens: 150,
           },
         }),
       }
@@ -54,24 +55,26 @@ Analyze this image and return ONLY JSON:
 
     const data = await response.json();
 
-    // 🔥 DEBUG (VERY IMPORTANT)
     console.log("GEMINI RAW:", JSON.stringify(data, null, 2));
 
-    const text =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+    // ✅ safer extraction
+    const parts = data?.candidates?.[0]?.content?.parts;
+    const textPart = parts?.find((p: any) => p.text)?.text;
 
-    if (!text) {
-      throw new Error("No response from Gemini");
+    if (!textPart) {
+      return NextResponse.json({
+        success: false,
+        message: "No usable response from Gemini",
+        debug: data,
+      });
     }
 
     return NextResponse.json({
       success: true,
-      raw: text,
+      raw: textPart,
     });
 
   } catch (err: any) {
-    console.error("Gemini ERROR:", err);
-
     return NextResponse.json({
       success: false,
       message: err.message,
@@ -79,7 +82,7 @@ Analyze this image and return ONLY JSON:
   }
 }
 
-// ✅ Helper (supports jpg/png/jpeg automatically)
+// ✅ helper
 async function fetchImageAsBase64(url: string) {
   const res = await fetch(url);
 

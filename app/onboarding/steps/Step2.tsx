@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Obleft from "../components/obleft";
 import Image from "next/image";
+import { validateImageFile, loadModels } from "../../../lib/imageValidation";
+import { useEffect } from "react";
+
 
 export default function Step2({
   form,
@@ -12,53 +15,33 @@ export default function Step2({
   errors,
 }: any) {
   const [uploading, setUploading] = useState(false);
+    useEffect(() => {
+  loadModels();
+}, []);
 
-const validateImage = async (url: string) => {
-  const res = await fetch("/api/validate-image", {
-    method: "POST",
-    body: JSON.stringify({ imageUrl: url }),
-  });
-
-  const data = await res.json();
-
-  console.log("FULL RESPONSE:", data);
-
-  // ✅ Safe guard
-  if (!data || !data.success || !data.raw) {
-    console.error("Invalid Gemini response:", data);
-    return null;
-  }
-
-  try {
-    const clean = String(data.raw)
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .replace(/^[^{]*/, "") // 🔥 remove junk before JSON
-      .trim();
-
-    const parsed = JSON.parse(clean);
-
-    return parsed;
-  } catch (err) {
-    console.error("Parse error:", err);
-    return null;
-  }
-};
 const handlePhoto = async (e: any) => {
   const file = e.target.files?.[0];
   if (!file) return;
 
   setUploading(true);
 
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", preset!);
-
   try {
-    // ✅ Upload to Cloudinary
+    // ✅ VALIDATE FIRST
+    const validation = await validateImageFile(file);
+
+    if (!validation.valid) {
+      alert(validation.reason);
+      return;
+    }
+
+    // ✅ THEN UPLOAD
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", preset!);
+
     const res = await fetch(
       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
       {
@@ -74,36 +57,15 @@ const handlePhoto = async (e: any) => {
       "/upload/w_512,h_768,c_fill,q_auto,f_auto/"
     );
 
-    // 🔥 Gemini validation
-    const validation = await validateImage(optimizedUrl);
-
-    console.log("VALIDATION:", validation);
-
-    if (!validation) {
-      alert("AI validation failed. Try again.");
-      return;
-    }
-
-    // ✅ Smart validation logic
-    const isValid =
-      validation.peopleCount === 1 &&
-      validation.confidence > 0.5;
-
-    if (!isValid) {
-      alert("Please upload a clear single-person image");
-      return;
-    }
-
-    // ✅ Save only valid image
     updateField("photo", optimizedUrl);
 
   } catch (err) {
     console.error(err);
+    alert("Something went wrong");
   } finally {
     setUploading(false);
   }
 };
-
   return (
     <div className="ob-page">
       <Obleft />
@@ -205,6 +167,36 @@ const handlePhoto = async (e: any) => {
             )}
           </div>
 
+
+            <div className="ob-field">
+  <label className="ob-label">Your Goals</label>
+
+  <div className="ob-goal-group">
+    {["Lose Weight", "Gain Weight", "Improve Skin"].map((goal) => {
+      const selected = form.goals.includes(goal);
+
+      return (
+        <button
+          key={goal}
+          type="button"
+          className={`ob-goal-btn ${selected ? "selected" : ""}`}
+          onClick={() => {
+            if (selected) {
+              updateField(
+                "goals",
+                form.goals.filter((g: string) => g !== goal)
+              );
+            } else {
+              updateField("goals", [...form.goals, goal]);
+            }
+          }}
+        >
+          {goal}
+        </button>
+      );
+    })}
+  </div>
+</div>
           {/* PHOTO UPLOAD */}
           <div className="ob-field">
             <label className="ob-label">Your Photo *</label>
