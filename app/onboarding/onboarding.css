@@ -621,3 +621,21 @@
   .ob-left { display: none; }
   .ob-right { padding: 2rem 1.5rem; }
 }
+.ob-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.ob-input-error {
+  border: 1px solid #ff4d4f !important;
+}
+
+.ob-gender-btn.error {
+  border-color: #ff4d4f;
+}
+.ob-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 6px;
+}

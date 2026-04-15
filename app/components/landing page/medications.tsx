@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-
+import Image from "next/image";
 type Unit = "all" | "weight" | "diabetes";
 
 export default function MedicationsSection() {
@@ -163,7 +163,7 @@ export default function MedicationsSection() {
     .map((med, index) => (
       <div key={index} className="med-full-card">
         <div className="med-card-image">
-          <img src={med.image} alt={med.name} />
+          <Image src={med.image} alt={med.name} width={300} height={200} />
         </div>
 
         <div className="med-card-top">
