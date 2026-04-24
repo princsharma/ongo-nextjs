@@ -1,0 +1,425 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.wlo-wrap {
+  min-height: 100vh;
+  font-family: 'Inter', 'DM Sans', sans-serif;
+}
+
+
+/* ─────────────── HERO ─────────────── */
+.wlo-hero {
+  min-height: 100vh;
+  background: linear-gradient(
+    130deg,
+    #A8C4D4 0%,
+    #C0B4D0 30%,
+    #D0B2C2 58%,
+    #DABEC6 80%,
+    #E0C4CC 100%
+  );
+  display: flex;
+  flex-direction: column;
+  padding-top: 100px;
+}
+
+.wlo-hero-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 1.5rem 1.75rem 2.5rem;
+  width: 100%;
+}
+
+.wlo-hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1A1A1A;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.9rem;
+}
+
+.wlo-hero-sub {
+  font-size: 0.95rem;
+  color: #2D2D2D;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  max-width: 340px;
+}
+
+/* Medications graphic */
+.wlo-meds-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.wlo-med-img {
+  width: 100%;
+  height: auto;
+  max-width: 420px;
+  object-fit: contain;
+}
+
+/* ─────────────── BUTTONS ─────────────── */
+.wlo-btn-dark {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: #2A1F36;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.9rem;
+}
+
+.wlo-btn-dark:hover {
+  background: #1A1228;
+  transform: translateY(-1px);
+}
+
+.wlo-btn-dark:active {
+  transform: scale(0.98);
+}
+
+.wlo-btn-continue {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.wlo-btn-continue.active {
+  background: #2A1F36;
+  color: #fff;
+  cursor: pointer;
+}
+
+.wlo-btn-continue.active:hover {
+  background: #1A1228;
+  transform: translateY(-1px);
+}
+
+.wlo-btn-continue.inactive {
+  background: #C8C4C0;
+  color: #fff;
+  cursor: default;
+}
+
+/* ─────────────── LOGIN / DISCLAIMER ─────────────── */
+.wlo-login-row {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #444;
+  margin: 1rem 0;
+}
+
+.wlo-login-row a {
+  color: #2563EB;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.wlo-login-row a:hover { text-decoration: underline; }
+
+.wlo-disclaimer {
+  font-size: 0.7rem;
+  color: #555;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 0.35rem;
+}
+
+.wlo-disclaimer a {
+  color: #2563EB;
+  text-decoration: none;
+}
+
+.wlo-source {
+  font-size: 0.7rem;
+  color: #555;
+  text-align: center;
+}
+
+.wlo-source a {
+  color: #2563EB;
+  text-decoration: none;
+}
+
+/* ─────────────── STEP PAGES ─────────────── */
+.wlo-step-wrap {
+  min-height: 100vh;
+  background: #EFECE6;
+  display: flex;
+  flex-direction: column;
+  padding-top: 100px;
+}
+
+.wlo-step-body {
+  flex: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+  width: 100%;
+}
+
+.wlo-question {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.wlo-question-sub {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Radio options (single-select) ── */
+.wlo-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.wlo-option {
+  width: 100%;
+  padding: 17px 20px;
+  background: #fff;
+  border: 1.5px solid #D4D0CA;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  color: #1A1A1A;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+  line-height: 1.4;
+}
+
+.wlo-option:hover {
+  border-color: #7A6A90;
+}
+
+.wlo-option.selected {
+  border-color: #2A1F36;
+  background: #F4F0FA;
+}
+
+/* ── Checkbox options (multi-select) ── */
+.wlo-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.wlo-check-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 18px;
+  background: #fff;
+  border: 1.5px solid #D4D0CA;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  user-select: none;
+}
+
+.wlo-check-item:hover {
+  border-color: #7A6A90;
+}
+
+.wlo-check-item.checked {
+  border-color: #2A1F36;
+}
+
+.wlo-checkbox {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid #AAAAA0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  background: #fff;
+}
+
+.wlo-checkbox.checked {
+  background: #2A1F36;
+  border-color: #2A1F36;
+}
+
+.wlo-check-label {
+  font-size: 0.93rem;
+  color: #1A1A1A;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Measure inputs ── */
+.wlo-measure-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.wlo-measure-full {
+  margin-bottom: 1.5rem;
+}
+
+.wlo-input {
+  width: 100%;
+  padding: 16px 18px;
+  background: #fff;
+  border: 1.5px solid #D4D0CA;
+  border-radius: 10px;
+  font-size: 0.93rem;
+  font-family: 'Inter', sans-serif;
+  color: #1A1A1A;
+  outline: none;
+  transition: border-color 0.15s;
+  display: block;
+}
+
+.wlo-input:focus {
+  border-color: #2A1F36;
+}
+
+.wlo-input::placeholder {
+  color: #AAAAA0;
+}
+
+/* ─────────────── RESULT ─────────────── */
+.wlo-result {
+  min-height: 100vh;
+  background: linear-gradient(
+    130deg,
+    #A8C4D4 0%,
+    #C0B4D0 30%,
+    #D0B2C2 58%,
+    #DABEC6 80%,
+    #E0C4CC 100%
+  );
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding-top: 100px;
+}
+
+.wlo-result-body {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 2rem 1.75rem;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.wlo-result-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #1A1A1A;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.wlo-result-desc {
+  font-size: 0.95rem;
+  color: #2D2D2D;
+  line-height: 1.65;
+  margin-bottom: 2rem;
+  max-width: 360px;
+}
+
+.wlo-bmi-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(8px);
+}
+
+.wlo-bmi-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.wlo-bmi-label {
+  font-size: 0.72rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.wlo-bmi-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1A1A1A;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.wlo-bmi-badge {
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.wlo-bmi-badge.underweight { background: #DBE7F5; color: #1E4E8C; }
+.wlo-bmi-badge.normal      { background: #D4EDD4; color: #1E6B2E; }
+.wlo-bmi-badge.overweight  { background: #FCE8C8; color: #8C5A14; }
+.wlo-bmi-badge.obese       { background: #F5D0D0; color: #8C1E1E; }
+
+.wlo-result-woman {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  position: relative;
+  z-index: 0;
+}
+
+.wlo-woman-img {
+  object-fit: contain;
+  object-position: top;
+  max-width: 420px;
+  width: 100%;
+}
+
+/* ─────────────── RESPONSIVE ─────────────── */
+@media (max-width: 540px) {
+  .wlo-hero-title { font-size: 1.9rem; }
+  .wlo-result-title { font-size: 2rem; }
+}
