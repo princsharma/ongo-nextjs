@@ -10,7 +10,7 @@ export const step1Schema = z.object({
   phone: z.string().min(8, "Phone number is required"),
 
   gender: z.enum(["Male", "Female", "Other"], {
-    errorMap: () => ({ message: "Please select a gender" }),
+    message: "Please select a gender",
   }),
 });
 
