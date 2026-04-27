@@ -4,11 +4,9 @@
 .wlf-root .fw {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: #F5F3EE;
-  min-height: 620px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  border-radius: 10px;
-  overflow: hidden;
 }
 
 .wlf-root .hdr {
@@ -23,8 +21,35 @@
   z-index: 10;
 }
 
-.wlf-root .logo { font-size: 16px; font-weight: 700; color: #1a1a1a; letter-spacing: -.3px; }
+.wlf-root .logo {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -.3px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
 .wlf-root .logo em { color: #2D6A4F; font-style: normal; }
+
+.wlf-root .contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background .1s;
+}
+.wlf-root .contact-link:hover { background: rgba(0, 0, 0, 0.05); }
+.wlf-root .contact-icon { font-size: 13px; }
+@media (max-width: 480px) {
+  .wlf-root .contact-num { display: none; }
+}
 
 .wlf-root .back-btn {
   font-size: 13px;
@@ -377,10 +402,9 @@
 
 /* page background */
 .wlf-page {
-  min-height: calc(100vh - 80px);
-  background: #fff;
-  padding: 100px 16px 40px;
+  min-height: 100vh;
+  background: #F5F3EE;
   display: flex;
   justify-content: center;
 }
-.wlf-page .fw { width: 100%; max-width: 640px; }
+.wlf-page .fw { width: 100%; }

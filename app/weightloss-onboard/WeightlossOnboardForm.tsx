@@ -176,7 +176,10 @@ export default function WeightlossOnboardForm() {
             <div className="logo">
               <em>Ongo</em> Weight Loss
             </div>
-            <div style={{ width: 64 }} />
+            <a className="contact-link" href="tel:+18885550123">
+              <span className="contact-icon" aria-hidden>📞</span>
+              <span className="contact-num">1 (888) 555-0123</span>
+            </a>
           </div>
 
           <div className="prog" aria-hidden>
