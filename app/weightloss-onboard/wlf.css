@@ -379,7 +379,7 @@
 .wlf-page {
   min-height: calc(100vh - 80px);
   background: #fff;
-  padding: 24px 16px 40px;
+  padding: 100px 16px 40px;
   display: flex;
   justify-content: center;
 }
