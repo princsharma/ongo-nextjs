@@ -29,9 +29,12 @@ export const formSchema = z.object({
   s1: z.string(),
   s2: z.array(z.string()),
 
+  bmiUnit: z.enum(["metric", "imperial"]),
   heightFt: z.string(),
   heightIn: z.string(),
   weightLbs: z.string(),
+  heightCm: z.string(),
+  weightKg: z.string(),
 
   wtHigh: z.string(),
   wtLow: z.string(),
@@ -48,7 +51,7 @@ export const formSchema = z.object({
   glpLastInjection: z.string(),
   vialPhotoName: z.string(),
   photoIdName: z.string(),
-  s9: z.string(),
+  s9: z.array(z.string()),
   bariDate: z.string(),
 
   s10: z.array(z.string()),
@@ -97,9 +100,12 @@ export type Form = z.infer<typeof formSchema>;
 export const initialForm: Form = {
   s1: "",
   s2: [],
+  bmiUnit: "imperial",
   heightFt: "",
   heightIn: "",
   weightLbs: "",
+  heightCm: "",
+  weightKg: "",
   wtHigh: "",
   wtLow: "",
   wtGoal: "",
@@ -113,7 +119,7 @@ export const initialForm: Form = {
   glpLastInjection: "",
   vialPhotoName: "",
   photoIdName: "",
-  s9: "",
+  s9: [],
   bariDate: "",
   s10: [],
   s11: [],

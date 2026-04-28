@@ -7,7 +7,6 @@ import {
   type ScreenId,
   initialForm,
   noBackScreens,
-  numberedScreens,
 } from "./schema";
 import {
   ALCOHOL_FREQUENCY,
@@ -82,6 +81,92 @@ function Multi({ options, values, onToggle }: MultiProps) {
   );
 }
 
+function BmiGauge({ bmi, category }: { bmi: number | null; category: string | null }) {
+  const cx = 200;
+  const cy = 200;
+  const r = 160;
+  const min = 15;
+  const max = 40;
+  const v = bmi == null ? min : Math.max(min, Math.min(max, bmi));
+  const t = (v - min) / (max - min);
+  const arcLength = Math.PI * r;
+  const filledLength = arcLength * t;
+  const tickCount = 14;
+  const ticks = Array.from({ length: tickCount }, (_, i) => {
+    const tt = i / (tickCount - 1);
+    const a = Math.PI * tt;
+    const r1 = r + 14;
+    const r2 = r + 22;
+    return {
+      x1: cx - r1 * Math.cos(a),
+      y1: cy - r1 * Math.sin(a),
+      x2: cx - r2 * Math.cos(a),
+      y2: cy - r2 * Math.sin(a),
+    };
+  });
+  const fullPath = `M ${cx - r},${cy} A ${r},${r} 0 0,1 ${cx + r},${cy}`;
+  const markerRotation = t * 180;
+
+  return (
+    <div className="bmi-gauge-wrap">
+      <svg viewBox="0 0 400 240" className="bmi-gauge">
+        <path
+          d={fullPath}
+          fill="none"
+          stroke="rgba(0,0,0,0.08)"
+          strokeWidth="20"
+          strokeLinecap="round"
+        />
+        <path
+          d={fullPath}
+          fill="none"
+          stroke="#2D6A4F"
+          strokeWidth="20"
+          strokeLinecap="round"
+          strokeDasharray={arcLength}
+          strokeDashoffset={arcLength - filledLength}
+          style={{
+            transition: "stroke-dashoffset .55s cubic-bezier(.22,.61,.36,1)",
+            opacity: bmi == null ? 0 : 1,
+          }}
+        />
+        {ticks.map((tk, i) => (
+          <line
+            key={i}
+            x1={tk.x1}
+            y1={tk.y1}
+            x2={tk.x2}
+            y2={tk.y2}
+            stroke="rgba(0,0,0,0.18)"
+            strokeWidth="2"
+          />
+        ))}
+        <g
+          style={{
+            transform: `rotate(${markerRotation}deg)`,
+            transformOrigin: `${cx}px ${cy}px`,
+            transition: "transform .55s cubic-bezier(.22,.61,.36,1)",
+            opacity: bmi == null ? 0 : 1,
+          }}
+        >
+          <circle cx={cx - r} cy={cy} r="10" fill="#1a1a1a" stroke="#fff" strokeWidth="3" />
+        </g>
+      </svg>
+      <div className="bmi-gauge-text">
+        <div className="bmi-gauge-eyebrow">YOUR BMI</div>
+        <div className="bmi-gauge-value">{bmi != null ? bmi.toFixed(1) : "—"}</div>
+        <div className="bmi-gauge-cat">{category ? category.toUpperCase() : ""}</div>
+      </div>
+    </div>
+  );
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const isValidEmail = (e: string) => EMAIL_RE.test(e.trim());
+const isValidName = (n: string) => n.trim().length >= 2;
+const isValidPhone = (p: string) => p.replace(/\D/g, "").length >= 10;
+
 function Select({
   value,
   onChange,
@@ -141,17 +226,96 @@ export default function WeightlossOnboardForm() {
       return { ...f, [k]: next as Form[K] };
     });
 
-  const bmi = useMemo(() => {
-    const ft = parseFloat(form.heightFt) || 0;
-    const inch = parseFloat(form.heightIn) || 0;
-    const lbs = parseFloat(form.weightLbs) || 0;
-    if (ft <= 0 || lbs <= 0) return null;
-    const ti = ft * 12 + inch;
-    if (ti <= 0) return null;
-    return (lbs * 703) / (ti * ti);
-  }, [form.heightFt, form.heightIn, form.weightLbs]);
+  const toggleExclusive = <K extends keyof Form>(k: K, val: string, noneVal: string) =>
+    setForm((f) => {
+      const arr = f[k] as string[];
+      let next: string[];
+      if (val === noneVal) {
+        next = arr.includes(noneVal) ? [] : [noneVal];
+      } else {
+        const without = arr.filter((x) => x !== val && x !== noneVal);
+        next = arr.includes(val) ? without : [...without, val];
+      }
+      return { ...f, [k]: next as Form[K] };
+    });
 
-  const idx = numberedScreens.indexOf(screen as (typeof numberedScreens)[number]);
+  const bmi = useMemo(() => {
+    if (form.bmiUnit === "imperial") {
+      const ft = parseFloat(form.heightFt) || 0;
+      const inch = parseFloat(form.heightIn) || 0;
+      const lbs = parseFloat(form.weightLbs) || 0;
+      if (ft <= 0 || lbs <= 0) return null;
+      const ti = ft * 12 + inch;
+      if (ti <= 0) return null;
+      return (lbs * 703) / (ti * ti);
+    }
+    const cm = parseFloat(form.heightCm) || 0;
+    const kg = parseFloat(form.weightKg) || 0;
+    if (cm <= 0 || kg <= 0) return null;
+    const m = cm / 100;
+    return kg / (m * m);
+  }, [form.bmiUnit, form.heightFt, form.heightIn, form.weightLbs, form.heightCm, form.weightKg]);
+
+  const bmiError = useMemo(() => {
+    if (form.bmiUnit === "imperial") {
+      const ft = parseFloat(form.heightFt);
+      const inch = parseFloat(form.heightIn) || 0;
+      const lbs = parseFloat(form.weightLbs);
+      if (form.heightFt && ft < 2) return "Height must be at least 2 feet.";
+      if (form.heightFt && (ft > 9 || (ft === 9 && inch > 0))) return "Height must be 9 feet or less.";
+      if (form.heightIn && (inch < 0 || inch > 11)) return "Inches must be between 0 and 11.";
+      if (form.weightLbs && lbs > 1100) return "Weight must be 1100 lbs or less.";
+      return null;
+    }
+    const cm = parseFloat(form.heightCm);
+    const kg = parseFloat(form.weightKg);
+    if (form.heightCm && cm < 61) return "Height must be at least 61 cm (2 ft).";
+    if (form.heightCm && cm > 274) return "Height must be 274 cm (9 ft) or less.";
+    if (form.weightKg && kg > 500) return "Weight must be 500 kg or less.";
+    return null;
+  }, [form.bmiUnit, form.heightFt, form.heightIn, form.weightLbs, form.heightCm, form.weightKg]);
+
+  const setBmiUnit = (next: "metric" | "imperial") => {
+    if (next === form.bmiUnit) return;
+    setForm((f) => {
+      const updated = { ...f, bmiUnit: next };
+      if (next === "metric") {
+        const ft = parseFloat(f.heightFt) || 0;
+        const inch = parseFloat(f.heightIn) || 0;
+        const lbs = parseFloat(f.weightLbs) || 0;
+        if (ft || inch) updated.heightCm = String(Math.round((ft * 12 + inch) * 2.54));
+        if (lbs) updated.weightKg = String(Math.round(lbs / 2.20462));
+      } else {
+        const cm = parseFloat(f.heightCm) || 0;
+        const kg = parseFloat(f.weightKg) || 0;
+        if (cm) {
+          const totalIn = cm / 2.54;
+          const ft = Math.floor(totalIn / 12);
+          updated.heightFt = String(ft);
+          updated.heightIn = String(Math.round(totalIn - ft * 12));
+        }
+        if (kg) updated.weightLbs = String(Math.round(kg * 2.20462));
+      }
+      return updated;
+    });
+  };
+
+  const bmiCategory = (b: number | null) => {
+    if (b == null) return null;
+    if (b < 18.5) return "under";
+    if (b < 25) return "healthy";
+    if (b < 30) return "over";
+    return "obese";
+  };
+
+  const eligibilityText = (b: number | null) => {
+    if (b == null) return "Enter your details";
+    if (b >= 30) return "Likely qualifies";
+    if (b >= 27) return "May qualify";
+    return "Unlikely to qualify";
+  };
+
+  const bmiCategoryNow = bmiCategory(bmi);
 
   const logSubmission = (next: ScreenId, label: string) => {
     console.log(label, form);
@@ -160,7 +324,11 @@ export default function WeightlossOnboardForm() {
 
   const submit = () => logSubmission("iConfirm", "Weight loss onboarding submission");
 
-  const emailOk = form.email.includes("@") && form.consentH && form.consentT;
+  const emailOk = isValidEmail(form.email) && form.consentH && form.consentT;
+  const profileOk =
+    isValidName(form.firstName) &&
+    isValidName(form.lastName) &&
+    isValidPhone(form.phone);
 
   return (
     <div className="wlf-root">
@@ -182,15 +350,6 @@ export default function WeightlossOnboardForm() {
               <span className="contact-icon" aria-hidden>📞</span>
               <span className="contact-num">1 (888) 555-0123</span>
             </a>
-          </div>
-
-          <div className="prog" aria-hidden>
-            {numberedScreens.map((_, i) => (
-              <div
-                key={i}
-                className={`prog-seg ${i < idx ? "done" : ""} ${i === idx ? "active" : ""}`}
-              />
-            ))}
           </div>
 
           {screen === "s1" && (
@@ -244,41 +403,121 @@ export default function WeightlossOnboardForm() {
               <div className="acct" style={{ textAlign: "left", margin: "0 0 16px" }}>
                 Already have an account? <a href="#">Log in</a>
               </div>
-              <div className="r2">
-                <input
-                  className="inp"
-                  style={{ margin: 0 }}
-                  type="number"
-                  inputMode="numeric"
-                  placeholder="Height (feet)"
-                  value={form.heightFt}
-                  onChange={(e) => upd("heightFt", e.target.value)}
-                />
-                <input
-                  className="inp"
-                  style={{ margin: 0 }}
-                  type="number"
-                  inputMode="numeric"
-                  placeholder="Height (inches)"
-                  value={form.heightIn}
-                  onChange={(e) => upd("heightIn", e.target.value)}
-                />
+
+              <div className="unit-toggle">
+                <button
+                  type="button"
+                  className={form.bmiUnit === "metric" ? "active" : ""}
+                  onClick={() => setBmiUnit("metric")}
+                >
+                  Metric
+                </button>
+                <button
+                  type="button"
+                  className={form.bmiUnit === "imperial" ? "active" : ""}
+                  onClick={() => setBmiUnit("imperial")}
+                >
+                  Imperial
+                </button>
               </div>
-              <input
-                className="inp"
-                type="number"
-                inputMode="numeric"
-                placeholder="Weight (pounds)"
-                value={form.weightLbs}
-                onChange={(e) => upd("weightLbs", e.target.value)}
-              />
-              {bmi !== null && (
-                <div className="bmi-pill">Your BMI: {bmi.toFixed(1)}</div>
+
+              {form.bmiUnit === "metric" ? (
+                <>
+                  <div className="r2">
+                    <input
+                      className="inp"
+                      style={{ margin: 0 }}
+                      type="number"
+                      inputMode="numeric"
+                      min={1}
+                      max={500}
+                      placeholder="Weight (kg)"
+                      value={form.weightKg}
+                      onChange={(e) => upd("weightKg", e.target.value)}
+                    />
+                    <input
+                      className="inp"
+                      style={{ margin: 0 }}
+                      type="number"
+                      inputMode="numeric"
+                      min={61}
+                      max={274}
+                      placeholder="Height (cm)"
+                      value={form.heightCm}
+                      onChange={(e) => upd("heightCm", e.target.value)}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="r2">
+                    <input
+                      className="inp"
+                      style={{ margin: 0 }}
+                      type="number"
+                      inputMode="numeric"
+                      min={2}
+                      max={9}
+                      placeholder="Height (feet)"
+                      value={form.heightFt}
+                      onChange={(e) => upd("heightFt", e.target.value)}
+                    />
+                    <input
+                      className="inp"
+                      style={{ margin: 0 }}
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      max={11}
+                      placeholder="Height (inches)"
+                      value={form.heightIn}
+                      onChange={(e) => upd("heightIn", e.target.value)}
+                    />
+                  </div>
+                  <input
+                    className="inp"
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    max={1100}
+                    placeholder="Weight (pounds)"
+                    value={form.weightLbs}
+                    onChange={(e) => upd("weightLbs", e.target.value)}
+                  />
+                </>
               )}
+
+              {bmiError && <div className="field-err">{bmiError}</div>}
+
+              <BmiGauge bmi={bmiError ? null : bmi} category={bmiError ? null : bmiCategoryNow} />
+
+              {bmi !== null && !bmiError && (
+                <div className="bmi-pill" style={{ textAlign: "center" }}>
+                  {eligibilityText(bmi)}
+                </div>
+              )}
+
+              <div className="cat-row">
+                {[
+                  { key: "under", name: "UNDER", range: "< 18.5" },
+                  { key: "healthy", name: "HEALTHY", range: "18.5 — 24.9" },
+                  { key: "over", name: "OVER", range: "25 — 29.9" },
+                  { key: "obese", name: "OBESE", range: "≥ 30" },
+                ].map((c) => (
+                  <div
+                    key={c.key}
+                    className={`cat-card ${bmiCategoryNow === c.key ? "active" : ""}`}
+                  >
+                    <div className="cat-name">{c.name}</div>
+                    <div className="cat-range">{c.range}</div>
+                  </div>
+                ))}
+              </div>
+
               <button
                 type="button"
                 className="cta"
-                disabled={bmi === null}
+                disabled={bmi === null || bmiError !== null}
                 onClick={() => goTo("iGood")}
               >
                 Continue
@@ -289,11 +528,13 @@ export default function WeightlossOnboardForm() {
           {screen === "iGood" && (
             <div className="inter">
               <div className="ibg" />
-              <div className="ic">
-                <div className="ititle">Good news!</div>
-                <div className="ibody">
-                  Based on this info, <strong>you may be eligible</strong> for GLP-1
-                  treatment. Let&apos;s find the best option for your goals.
+              <div className="ic center">
+                <div className="ic-body">
+                  <div className="ititle">Good news!</div>
+                  <div className="ibody">
+                    Based on this info, <strong>you may be eligible</strong> for GLP-1
+                    treatment. Let&apos;s find the best option for your goals.
+                  </div>
                 </div>
                 <button type="button" className="icta" onClick={() => goTo("s20")}>
                   Continue
@@ -305,25 +546,27 @@ export default function WeightlossOnboardForm() {
           {screen === "iRoad" && (
             <div className="inter">
               <div className="ibg" />
-              <div className="ic">
-                <div className="ititle" style={{ fontSize: 27, marginBottom: 8 }}>
-                  Great! Now a few questions
-                </div>
-                <div className="ibody" style={{ fontSize: 14, marginBottom: 22 }}>
-                  First, answer health questions and see your treatment options.
-                </div>
-                <div className="rm">
-                  <div className="rms">
-                    <div className="rmi a">♥</div>
-                    <div className="rmt">
-                      <div className="rmlab">Health history and treatment options</div>
-                      <span className="rmpill">3–4 minutes</span>
-                    </div>
+              <div className="ic center">
+                <div className="ic-body">
+                  <div className="ititle" style={{ fontSize: 27, marginBottom: 8 }}>
+                    Great! Now a few questions
                   </div>
-                  <div className="rms">
-                    <div className="rmi i">📅</div>
-                    <div className="rmt">
-                      <div className="rmlab d">Book your consultation</div>
+                  <div className="ibody" style={{ fontSize: 14, marginBottom: 22 }}>
+                    First, answer health questions and see your treatment options.
+                  </div>
+                  <div className="rm">
+                    <div className="rms">
+                      <div className="rmi a">♥</div>
+                      <div className="rmt">
+                        <div className="rmlab">Health history and treatment options</div>
+                        <span className="rmpill">3–4 minutes</span>
+                      </div>
+                    </div>
+                    <div className="rms">
+                      <div className="rmi i">📅</div>
+                      <div className="rmt">
+                        <div className="rmlab d">Book your consultation</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -572,7 +815,7 @@ export default function WeightlossOnboardForm() {
                     onChange={(e) => upd("photoIdName", e.target.files?.[0]?.name ?? "")}
                   />
                 </label>
-                <label className="cta id-btn">
+                <label className="cta cta-cap id-btn">
                   Take photo
                   <input
                     type="file"
@@ -586,7 +829,6 @@ export default function WeightlossOnboardForm() {
               <button
                 type="button"
                 className="cta"
-                style={{ marginTop: 12 }}
                 disabled={!form.photoIdName}
                 onClick={() => goTo("s9")}
               >
@@ -599,42 +841,58 @@ export default function WeightlossOnboardForm() {
             <div className="sc">
               <div className="slabel">Weight history</div>
               <div className="q">Have you had any of the following bariatric procedures?</div>
-              <Radio
+              <div className="qs">Select all that apply.</div>
+              <Multi
                 options={BARIATRIC_PROCEDURES}
-                value={form.s9}
-                onSelect={(v) => upd("s9", v)}
+                values={form.s9}
+                onToggle={(v) => toggleExclusive("s9", v, "None of these")}
               />
               <button
                 type="button"
                 className="cta"
-                disabled={!form.s9}
-                onClick={() => goTo(form.s9 && form.s9 !== "None of these" ? "s9b" : "s10")}
+                disabled={form.s9.length === 0}
+                onClick={() =>
+                  goTo(
+                    form.s9.some((p) => p !== "None of these") ? "s9b" : "s10"
+                  )
+                }
               >
                 Continue
               </button>
             </div>
           )}
 
-          {screen === "s9b" && (
-            <div className="sc">
-              <div className="q">
-                Provide the approximate date of your {form.s9.toLowerCase()} surgery.
+          {screen === "s9b" && (() => {
+            const procs = form.s9.filter((p) => p !== "None of these");
+            const lower = procs.map((p) => p.toLowerCase());
+            const list =
+              lower.length <= 1
+                ? lower[0] ?? ""
+                : lower.length === 2
+                ? `${lower[0]} and ${lower[1]}`
+                : `${lower.slice(0, -1).join(", ")}, and ${lower[lower.length - 1]}`;
+            const word = procs.length > 1 ? "surgeries" : "surgery";
+            return (
+              <div className="sc">
+                <div className="q">
+                  Provide the approximate date of your {list} {word}.
+                </div>
+                <textarea
+                  className="inp"
+                  value={form.bariDate ?? ""}
+                  onChange={(e) => upd("bariDate", e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="cta"
+                  disabled={!form.bariDate.trim()}
+                  onClick={() => goTo("s10")}
+                >
+                  Continue
+                </button>
               </div>
-              <textarea
-                className="inp"
-                value={form.bariDate ?? ""}
-                onChange={(e) => upd("bariDate", e.target.value)}
-              />
-              <button
-                type="button"
-                className="cta"
-                disabled={!form.bariDate.trim()}
-                onClick={() => goTo("s10")}
-              >
-                Continue
-              </button>
-            </div>
-          )}
+            );
+          })()}
 
           {screen === "s10" && (
             <div className="sc">
@@ -649,7 +907,7 @@ export default function WeightlossOnboardForm() {
               <Multi
                 options={WEIGHT_DIAGNOSES}
                 values={form.s10}
-                onToggle={(v) => toggle("s10", v)}
+                onToggle={(v) => toggleExclusive("s10", v, "None of the above")}
               />
               <button
                 type="button"
@@ -670,7 +928,7 @@ export default function WeightlossOnboardForm() {
               <Multi
                 options={OTHER_CONDITIONS}
                 values={form.s11}
-                onToggle={(v) => toggle("s11", v)}
+                onToggle={(v) => toggleExclusive("s11", v, "None of the above")}
               />
               <input
                 className="inp"
@@ -700,7 +958,7 @@ export default function WeightlossOnboardForm() {
               <Multi
                 options={SAFETY_TREATMENTS}
                 values={form.s12}
-                onToggle={(v) => toggle("s12", v)}
+                onToggle={(v) => toggleExclusive("s12", v, "None of these")}
               />
               <button
                 type="button"
@@ -834,7 +1092,7 @@ export default function WeightlossOnboardForm() {
               <Multi
                 options={RECREATIONAL_DRUGS}
                 values={form.s17}
-                onToggle={(v) => toggle("s17", v)}
+                onToggle={(v) => toggleExclusive("s17", v, "I don't use recreational drugs")}
               />
               <button
                 type="button"
@@ -900,19 +1158,39 @@ export default function WeightlossOnboardForm() {
                   onChange={(v) => upd("water", v)}
                 />
               </div>
-              <div className="stress-label">Stress level (1 = very low, 10 = very high)</div>
-              <div className="stress-row">
-                <span className="smin">1</span>
-                <input
-                  type="range"
-                  min={1}
-                  max={10}
-                  value={form.stress}
-                  onChange={(e) => upd("stress", Number(e.target.value))}
-                />
-                <span className="smax">10</span>
-                <span className="sv">{form.stress}</span>
-              </div>
+              <div className="stress-label">Stress level</div>
+              {(() => {
+                const zone =
+                  form.stress <= 3 ? "low" : form.stress <= 7 ? "med" : "high";
+                return (
+                  <div className={`stress-block stress-${zone}`}>
+                    <div className="stress-row">
+                      <span className="smin">1</span>
+                      <div className="stress-track-wrap">
+                        <input
+                          type="range"
+                          min={1}
+                          max={10}
+                          value={form.stress}
+                          onChange={(e) => upd("stress", Number(e.target.value))}
+                        />
+                        <div className="stress-ticks" aria-hidden>
+                          {Array.from({ length: 10 }).map((_, i) => (
+                            <span key={i} />
+                          ))}
+                        </div>
+                      </div>
+                      <span className="smax">10</span>
+                      <span className="sv">{form.stress}</span>
+                    </div>
+                    <div className="stress-zones">
+                      <span className={zone === "low" ? "active" : ""}>Low</span>
+                      <span className={zone === "med" ? "active" : ""}>Medium</span>
+                      <span className={zone === "high" ? "active" : ""}>High</span>
+                    </div>
+                  </div>
+                );
+              })()}
               <button type="button" className="cta" onClick={() => goTo("s19")}>
                 Continue
               </button>
@@ -953,6 +1231,9 @@ export default function WeightlossOnboardForm() {
                 value={form.email}
                 onChange={(e) => upd("email", e.target.value)}
               />
+              {form.email.length > 0 && !isValidEmail(form.email) && (
+                <div className="field-err">Please enter a valid email address.</div>
+              )}
               <div className="opts" style={{ gap: 7 }}>
                 <label
                   className={`opt consent ${form.consentH ? "sel" : ""}`}
@@ -1024,6 +1305,12 @@ export default function WeightlossOnboardForm() {
                   onChange={(e) => upd("lastName", e.target.value)}
                 />
               </div>
+              {form.firstName.length > 0 && !isValidName(form.firstName) && (
+                <div className="field-err">First name must be at least 2 characters.</div>
+              )}
+              {form.lastName.length > 0 && !isValidName(form.lastName) && (
+                <div className="field-err">Last name must be at least 2 characters.</div>
+              )}
               <div className="r2" style={{ marginTop: 8 }}>
                 <input
                   className="inp"
@@ -1057,6 +1344,9 @@ export default function WeightlossOnboardForm() {
                 value={form.phone}
                 onChange={(e) => upd("phone", e.target.value)}
               />
+              {form.phone.length > 0 && !isValidPhone(form.phone) && (
+                <div className="field-err">Please enter a valid phone number (at least 10 digits).</div>
+              )}
               <input
                 className="inp"
                 type="text"
@@ -1064,7 +1354,12 @@ export default function WeightlossOnboardForm() {
                 value={form.address}
                 onChange={(e) => upd("address", e.target.value)}
               />
-              <button type="button" className="cta" onClick={() => goTo("s22")}>
+              <button
+                type="button"
+                className="cta"
+                disabled={!profileOk}
+                onClick={() => goTo("s22")}
+              >
                 Continue
               </button>
             </div>
@@ -1143,27 +1438,31 @@ export default function WeightlossOnboardForm() {
           {screen === "iConfirm" && (
             <div className="inter">
               <div className="ibg" />
-              <div className="ic">
-                <div className="iconfirm-tick">✓</div>
-                <div className="ititle" style={{ fontSize: 26, marginBottom: 10 }}>
-                  You&apos;re all set!
+              <div className="ic center">
+                <div className="ic-body">
+                  <div className="iconfirm-tick">✓</div>
+                  <div className="ititle" style={{ fontSize: 26, marginBottom: 10 }}>
+                    You&apos;re all set!
+                  </div>
+                  <div className="ibody">
+                    Your consultation is booked. Check your email for prep instructions. Your doctor
+                    will review your intake before the call.
+                  </div>
+                  <div className="cbox">
+                    <strong>Consultation confirmed</strong>
+                    <span>
+                      {form.slot ? form.slot.replace("|", " · ") : "Your selected time"} · Video call
+                    </span>
+                  </div>
+                  <div className="cbox">
+                    <strong>What to expect</strong>
+                    <span>
+                      Your doctor will discuss your goals and prescribe a personalised GLP-1 plan if
+                      clinically appropriate.
+                    </span>
+                  </div>
                 </div>
-                <div className="ibody">
-                  Your consultation is booked. Check your email for prep instructions. Your doctor
-                  will review your intake before the call.
-                </div>
-                <div className="cbox">
-                  <strong>Consultation confirmed</strong>
-                  <span>{form.slot ? form.slot.replace("|", " · ") : "Your selected time"} · Video call</span>
-                </div>
-                <div className="cbox">
-                  <strong>What to expect</strong>
-                  <span>
-                    Your doctor will discuss your goals and prescribe a personalised GLP-1 plan if
-                    clinically appropriate.
-                  </span>
-                </div>
-                <button type="button" className="icta" style={{ marginTop: 10 }}>
+                <button type="button" className="icta">
                   Go to your patient portal →
                 </button>
               </div>
@@ -1190,7 +1489,7 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 style={{ maxWidth: 320, marginTop: 10 }}
-                disabled={!form.email.includes("@")}
+                disabled={!isValidEmail(form.email)}
                 onClick={() => logSubmission("iThanks", "Weight loss onboarding — disqualified lead")}
               >
                 Keep me updated
@@ -1201,15 +1500,17 @@ export default function WeightlossOnboardForm() {
           {screen === "iThanks" && (
             <div className="inter">
               <div className="ibg" />
-              <div className="ic">
-                <div className="iconfirm-tick">✓</div>
-                <div className="ititle" style={{ fontSize: 26, marginBottom: 10 }}>
-                  Thanks — you&apos;re on the list
-                </div>
-                <div className="ibody">
-                  We&apos;ll send helpful resources to <strong>{form.email}</strong>. In the
-                  meantime, please reach out to your primary care provider for personalised
-                  guidance.
+              <div className="ic center">
+                <div className="ic-body">
+                  <div className="iconfirm-tick">✓</div>
+                  <div className="ititle" style={{ fontSize: 26, marginBottom: 10 }}>
+                    Thanks — you&apos;re on the list
+                  </div>
+                  <div className="ibody">
+                    We&apos;ll send helpful resources to <strong>{form.email}</strong>. In the
+                    meantime, please reach out to your primary care provider for personalised
+                    guidance.
+                  </div>
                 </div>
               </div>
             </div>
