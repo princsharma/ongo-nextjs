@@ -15,6 +15,7 @@ import {
   ETHNICITIES,
   EXERCISE_DAYS,
   FAST_FOOD_PER_WEEK,
+  GLP_EXPERIENCE,
   INSPIRATIONS,
   MEALS_PER_DAY,
   NO_YES,
@@ -28,6 +29,7 @@ import {
   SLOTS,
   STRUGGLE_DURATIONS,
   SUGARY_DRINKS_PER_WEEK,
+  TIRZEPATIDE_DOSES,
   WATER_INTAKE,
   WEIGHT_DIAGNOSES,
   WEIGHT_GOALS,
@@ -277,7 +279,7 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={bmi === null}
-                onClick={() => goTo(bmi !== null && bmi >= 27 ? "iGood" : "dSoft")}
+                onClick={() => goTo("iGood")}
               >
                 Continue
               </button>
@@ -293,7 +295,7 @@ export default function WeightlossOnboardForm() {
                   Based on this info, <strong>you may be eligible</strong> for GLP-1
                   treatment. Let&apos;s find the best option for your goals.
                 </div>
-                <button type="button" className="icta" onClick={() => goTo("iRoad")}>
+                <button type="button" className="icta" onClick={() => goTo("s20")}>
                   Continue
                 </button>
               </div>
@@ -316,12 +318,6 @@ export default function WeightlossOnboardForm() {
                     <div className="rmt">
                       <div className="rmlab">Health history and treatment options</div>
                       <span className="rmpill">3–4 minutes</span>
-                    </div>
-                  </div>
-                  <div className="rms">
-                    <div className="rmi i">✉</div>
-                    <div className="rmt">
-                      <div className="rmlab d">Email verification</div>
                     </div>
                   </div>
                   <div className="rms">
@@ -429,7 +425,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s7" && (
             <div className="sc">
               <div className="slabel">Medication history</div>
-              <div className="q">Are you currently taking GLP-1 medication?</div>
+              <div className="q">Are you currently taking, or have you previously taken, a GLP-1 medication?</div>
               <Radio
                 options={YES_NO}
                 value={form.s7}
@@ -439,26 +435,159 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={!form.s7}
-                onClick={() => goTo("s8")}
+                onClick={() => goTo(form.s7 === "Yes" ? "s7a" : "s7e")}
               >
                 Continue
               </button>
             </div>
           )}
 
-          {screen === "s8" && (
+          {screen === "s7a" && (
             <div className="sc">
               <div className="slabel">Medication history</div>
-              <div className="q">Have you previously taken GLP-1 medication?</div>
+              <div className="q">Please describe your past experience with GLP-1 medications.</div>
               <Radio
-                options={YES_NO}
-                value={form.s8}
-                onSelect={(v) => upd("s8", v)}
+                options={GLP_EXPERIENCE}
+                value={form.glpExperience}
+                onSelect={(v) => upd("glpExperience", v)}
               />
               <button
                 type="button"
                 className="cta"
-                disabled={!form.s8}
+                disabled={!form.glpExperience}
+                onClick={() => goTo("s7b")}
+              >
+                Continue
+              </button>
+            </div>
+          )}
+
+          {screen === "s7b" && (
+            <div className="sc">
+              <div className="slabel">Medication history</div>
+              <div className="q">
+                What is the total dose of Tirzepatide (or similar medication) in mg you are
+                currently using?
+              </div>
+              <Radio
+                options={TIRZEPATIDE_DOSES}
+                value={form.glpDose}
+                onSelect={(v) => upd("glpDose", v)}
+              />
+              <div className="qs">
+                Please share how many units of medication you are drawing up with each injection,
+                and how often you inject.
+              </div>
+              <textarea
+                className="inp"
+                placeholder="Please specify"
+                value={form.glpDoseDetails ?? ""}
+                onChange={(e) => upd("glpDoseDetails", e.target.value)}
+              />
+              <button
+                type="button"
+                className="cta"
+                disabled={!form.glpDose}
+                onClick={() => goTo("s7c")}
+              >
+                Continue
+              </button>
+            </div>
+          )}
+
+          {screen === "s7c" && (
+            <div className="sc">
+              <div className="slabel">Medication history</div>
+              <div className="q">What was the date of your last injection (Month/Day/Year)?</div>
+              <input
+                className="inp"
+                type="date"
+                value={form.glpLastInjection ?? ""}
+                onChange={(e) => upd("glpLastInjection", e.target.value)}
+              />
+              <button
+                type="button"
+                className="cta"
+                disabled={!form.glpLastInjection}
+                onClick={() => goTo("s7d")}
+              >
+                Continue
+              </button>
+            </div>
+          )}
+
+          {screen === "s7d" && (
+            <div className="sc">
+              <div className="slabel">Medication history</div>
+              <div className="q" style={{ fontSize: 17, fontWeight: 600 }}>
+                If you have a picture available of your current vial, please upload a picture of
+                your prescription (make sure that your name and the dosing instructions are
+                visible). If not immediately available, please move on with the intake.
+              </div>
+              <label className="cta2 upload-btn">
+                ⬆ Upload file
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e) => upd("vialPhotoName", e.target.files?.[0]?.name ?? "")}
+                />
+              </label>
+              {form.vialPhotoName && (
+                <div className="upload-name">✓ {form.vialPhotoName}</div>
+              )}
+              <button type="button" className="cta" onClick={() => goTo("s7e")}>
+                Continue
+              </button>
+            </div>
+          )}
+
+          {screen === "s7e" && (
+            <div className="sc">
+              <div className="step-of">Step 1 of 3</div>
+              <div className="q">Upload a photo ID</div>
+              <div className="qs">
+                Take or upload an image of a government-issued photo ID, like a driver&apos;s
+                license or passport.
+              </div>
+              <div className="id-illus" aria-hidden>🪪</div>
+              <div className="tips-card">
+                <div className="tips-title">Tips for a good photo</div>
+                <div className="tips-item">✓ Clearly shows your entire ID</div>
+                <div className="tips-item">✓ Is not cropped, blurry, or dark</div>
+                <div className="tips-note">
+                  🔒 Your photos will not be shared with anyone except your healthcare team.
+                </div>
+              </div>
+              {form.photoIdName && (
+                <div className="upload-name">✓ {form.photoIdName}</div>
+              )}
+              <div className="id-actions">
+                <label className="cta2 id-btn">
+                  Select photo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={(e) => upd("photoIdName", e.target.files?.[0]?.name ?? "")}
+                  />
+                </label>
+                <label className="cta id-btn">
+                  Take photo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    style={{ display: "none" }}
+                    onChange={(e) => upd("photoIdName", e.target.files?.[0]?.name ?? "")}
+                  />
+                </label>
+              </div>
+              <button
+                type="button"
+                className="cta"
+                style={{ marginTop: 12 }}
+                disabled={!form.photoIdName}
                 onClick={() => goTo("s9")}
               >
                 Continue
@@ -488,21 +617,18 @@ export default function WeightlossOnboardForm() {
 
           {screen === "s9b" && (
             <div className="sc">
-              <div className="slabel">Weight history</div>
               <div className="q">
                 Provide the approximate date of your {form.s9.toLowerCase()} surgery.
               </div>
-              <div className="qs">Month and year is fine.</div>
-              <input
+              <textarea
                 className="inp"
-                type="month"
-                value={form.bariDate}
+                value={form.bariDate ?? ""}
                 onChange={(e) => upd("bariDate", e.target.value)}
               />
               <button
                 type="button"
                 className="cta"
-                disabled={!form.bariDate}
+                disabled={!form.bariDate.trim()}
                 onClick={() => goTo("s10")}
               >
                 Continue
@@ -622,7 +748,35 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={!form.s14}
-                onClick={() => goTo(form.s14 === "Yes" ? "dHard" : "s15")}
+                onClick={() => goTo(form.s14 === "Yes" ? "s14b" : "s15")}
+              >
+                Continue
+              </button>
+            </div>
+          )}
+
+          {screen === "s14b" && (
+            <div className="sc">
+              <div className="slabel">Safety screening</div>
+              <div className="q consent-warn">
+                By selecting &ldquo;I Understand&rdquo; you understand that any prescribed treatment
+                must be discontinued prior to attempting pregnancy, becoming pregnant, or upon
+                beginning breastfeeding.
+              </div>
+              <div className="opts" style={{ gap: 7 }}>
+                <label
+                  className={`opt consent ${form.pregnancyConsent ? "sel" : ""}`}
+                  onClick={() => upd("pregnancyConsent", !form.pregnancyConsent)}
+                >
+                  <span className="chk">✓</span>
+                  <span className="consent-text">I understand</span>
+                </label>
+              </div>
+              <button
+                type="button"
+                className="cta"
+                disabled={!form.pregnancyConsent}
+                onClick={() => goTo("s15")}
               >
                 Continue
               </button>
@@ -642,7 +796,7 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={!form.s15}
-                onClick={() => goTo("s16")}
+                onClick={() => goTo(form.s15 === "Yes" ? "dHard" : "s16")}
               >
                 Continue
               </button>
@@ -779,7 +933,7 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={form.s19.length === 0}
-                onClick={() => goTo("s20")}
+                onClick={() => goTo("s21")}
               >
                 Continue
               </button>
@@ -824,7 +978,7 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={!emailOk}
-                onClick={() => goTo("s21")}
+                onClick={() => goTo("iRoad")}
               >
                 Continue
               </button>
@@ -1040,33 +1194,6 @@ export default function WeightlossOnboardForm() {
                 onClick={() => logSubmission("iThanks", "Weight loss onboarding — disqualified lead")}
               >
                 Keep me updated
-              </button>
-            </div>
-          )}
-
-          {screen === "dSoft" && (
-            <div className="disq">
-              <div className="di">💬</div>
-              <div className="dt">Not a match right now</div>
-              <div className="db">
-                Based on your height and weight, GLP-1 medication may not be indicated at this time.
-                However, a doctor can still help you find the right path forward.
-              </div>
-              <input
-                className="inp"
-                type="email"
-                placeholder="Your email — stay in the loop"
-                style={{ maxWidth: 320, textAlign: "center" }}
-                value={form.email}
-                onChange={(e) => upd("email", e.target.value)}
-              />
-              <button
-                type="button"
-                className="cta"
-                style={{ maxWidth: 320, marginTop: 10 }}
-                onClick={() => goTo("iGood")}
-              >
-                Talk to a doctor anyway
               </button>
             </div>
           )}

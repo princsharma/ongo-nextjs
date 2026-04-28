@@ -2,23 +2,27 @@ import { z } from "zod";
 
 export const screenIds = [
   "s1", "s2", "s3", "iGood", "iRoad",
-  "s4", "s5", "s6", "s7", "s8", "s9", "s9b",
-  "s10", "s11", "s12", "s13", "s14", "s15",
+  "s4", "s5", "s6", "s7", "s7a", "s7b", "s7c", "s7d", "s7e",
+  "s9", "s9b",
+  "s10", "s11", "s12", "s13", "s14", "s14b", "s15",
   "s16", "s17", "s18", "s19", "s20",
   "s21", "s22", "s23",
-  "iConfirm", "iThanks", "dHard", "dSoft",
+  "iConfirm", "iThanks", "dHard",
 ] as const;
 
 export type ScreenId = (typeof screenIds)[number];
 
 export const numberedScreens = [
-  "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9",
+  "s1", "s2", "s3", "s20",
+  "s4", "s5", "s6",
+  "s7", "s7a", "s7b", "s7c", "s7d", "s7e",
+  "s9",
   "s10", "s11", "s12", "s13", "s14", "s15", "s16", "s17",
-  "s18", "s19", "s20", "s21", "s22", "s23",
+  "s18", "s19", "s21", "s22", "s23",
 ] as const satisfies readonly ScreenId[];
 
 export const noBackScreens: ReadonlySet<ScreenId> = new Set([
-  "s1", "iGood", "iRoad", "dHard", "dSoft", "iConfirm", "iThanks",
+  "s1", "iGood", "iRoad", "dHard", "iConfirm", "iThanks",
 ]);
 
 export const formSchema = z.object({
@@ -38,7 +42,12 @@ export const formSchema = z.object({
   s6: z.array(z.string()),
 
   s7: z.string(),
-  s8: z.string(),
+  glpExperience: z.string(),
+  glpDose: z.string(),
+  glpDoseDetails: z.string(),
+  glpLastInjection: z.string(),
+  vialPhotoName: z.string(),
+  photoIdName: z.string(),
   s9: z.string(),
   bariDate: z.string(),
 
@@ -48,6 +57,7 @@ export const formSchema = z.object({
   s12: z.array(z.string()),
   s13: z.string(),
   s14: z.string(),
+  pregnancyConsent: z.boolean(),
   s15: z.string(),
 
   s16: z.string(),
@@ -97,7 +107,12 @@ export const initialForm: Form = {
   s5: "",
   s6: [],
   s7: "",
-  s8: "",
+  glpExperience: "",
+  glpDose: "",
+  glpDoseDetails: "",
+  glpLastInjection: "",
+  vialPhotoName: "",
+  photoIdName: "",
   s9: "",
   bariDate: "",
   s10: [],
@@ -106,6 +121,7 @@ export const initialForm: Form = {
   s12: [],
   s13: "",
   s14: "",
+  pregnancyConsent: false,
   s15: "",
   s16: "",
   s17: [],

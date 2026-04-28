@@ -33,6 +33,24 @@ export const PAST_METHODS = [
 ] as const;
 
 export const YES_NO = ["Yes", "No"] as const;
+
+export const GLP_EXPERIENCE = [
+  "I tolerated a GLP-1 well with no or minimal side effects",
+  "I tolerated a GLP-1 okay with moderate side effects",
+  "I had significant side effects",
+] as const;
+
+export const TIRZEPATIDE_DOSES = [
+  "0.25mg",
+  "0.5mg",
+  "1mg",
+  "1.7mg",
+  "2.4mg",
+  "2.5mg",
+  "5mg",
+  "7.5mg",
+  "Other",
+] as const;
 export const NO_YES = ["No", "Yes"] as const;
 export const NO_YES_UNSURE = ["No", "Yes", "I'm not sure"] as const;
 
