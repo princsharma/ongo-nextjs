@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./wlf.css";
+import StripePayment from "./StripePayment";
 import {
   type Form,
   type ScreenId,
@@ -15,12 +16,17 @@ import {
   EXERCISE_DAYS,
   FAST_FOOD_PER_WEEK,
   GLP_EXPERIENCE,
+  GLP_MEDICATIONS,
   INSPIRATIONS,
   MEALS_PER_DAY,
+  MEDICATION_ADDONS,
+  MEDICATION_DOSES,
   NO_YES,
   NO_YES_UNSURE,
   OTHER_CONDITIONS,
   PAST_METHODS,
+  PLANS,
+  PLAN_BENEFITS,
   RECREATIONAL_DRUGS,
   SAFETY_TREATMENTS,
   SEX_OPTIONS,
@@ -28,7 +34,7 @@ import {
   SLOTS,
   STRUGGLE_DURATIONS,
   SUGARY_DRINKS_PER_WEEK,
-  TIRZEPATIDE_DOSES,
+  type GlpMedication,
   WATER_INTAKE,
   WEIGHT_DIAGNOSES,
   WEIGHT_GOALS,
@@ -322,7 +328,9 @@ export default function WeightlossOnboardForm() {
     goTo(next);
   };
 
-  const submit = () => logSubmission("iConfirm", "Weight loss onboarding submission");
+  const submit = () => logSubmission("sPlan", "Weight loss onboarding submission");
+
+  const selectedPlan = PLANS.find((p) => p.id === form.plan);
 
   const emailOk = isValidEmail(form.email) && form.consentH && form.consentT;
   const profileOk =
@@ -354,7 +362,7 @@ export default function WeightlossOnboardForm() {
 
           {screen === "s1" && (
             <div className="sc">
-              <div className="q">What&apos;s your weight loss goal?</div>
+              <div className="q">How much weight would you like to lose?</div>
               <Radio
                 options={WEIGHT_GOALS}
                 value={form.s1}
@@ -376,7 +384,7 @@ export default function WeightlossOnboardForm() {
 
           {screen === "s2" && (
             <div className="sc">
-              <div className="q">What&apos;s inspiring you to make a change?</div>
+              <div className="q">What&apos;s making you want to start now?</div>
               <div className="qs">Select all that apply.</div>
               <Multi
                 options={INSPIRATIONS}
@@ -399,7 +407,7 @@ export default function WeightlossOnboardForm() {
 
           {screen === "s3" && (
             <div className="sc">
-              <div className="q">What&apos;s your current height and weight?</div>
+              <div className="q">What is your current height and weight?</div>
               <div className="acct" style={{ textAlign: "left", margin: "0 0 16px" }}>
                 Already have an account? <a href="#">Log in</a>
               </div>
@@ -580,7 +588,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s4" && (
             <div className="sc">
               <div className="slabel">Weight history</div>
-              <div className="q">Tell us more about your weight history</div>
+              <div className="q">Can you share a little about your weight journey so far?</div>
               <div className="qs">This helps your doctor understand your journey.</div>
               <div className="r2">
                 <input
@@ -627,7 +635,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s5" && (
             <div className="sc">
               <div className="slabel">Weight history</div>
-              <div className="q">How long have you struggled with your weight?</div>
+              <div className="q">How long has your weight been a concern for you?</div>
               <Radio
                 options={STRUGGLE_DURATIONS}
                 value={form.s5}
@@ -647,7 +655,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s6" && (
             <div className="sc">
               <div className="slabel">Weight history</div>
-              <div className="q">What ways have you tried to lose weight in the past?</div>
+              <div className="q">What have you tried before to lose weight?</div>
               <div className="qs">Select all that apply.</div>
               <Multi
                 options={PAST_METHODS}
@@ -668,7 +676,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s7" && (
             <div className="sc">
               <div className="slabel">Medication history</div>
-              <div className="q">Are you currently taking, or have you previously taken, a GLP-1 medication?</div>
+              <div className="q">Have you taken any GLP-1 medications before or are you taking one now?</div>
               <Radio
                 options={YES_NO}
                 value={form.s7}
@@ -678,7 +686,7 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={!form.s7}
-                onClick={() => goTo(form.s7 === "Yes" ? "s7a" : "s7e")}
+                onClick={() => goTo(form.s7 === "Yes" ? "s7m" : "s7e")}
               >
                 Continue
               </button>
@@ -688,7 +696,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s7a" && (
             <div className="sc">
               <div className="slabel">Medication history</div>
-              <div className="q">Please describe your past experience with GLP-1 medications.</div>
+              <div className="q">How was your experience with GLP-1 medications?</div>
               <Radio
                 options={GLP_EXPERIENCE}
                 value={form.glpExperience}
@@ -698,6 +706,29 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={!form.glpExperience}
+                onClick={() => goTo("s7c")}
+              >
+                Continue
+              </button>
+            </div>
+          )}
+
+          {screen === "s7m" && (
+            <div className="sc">
+              <div className="slabel">Medication history</div>
+              <div className="q">Which GLP-1 medication have you used or currently using?</div>
+              <Radio
+                options={GLP_MEDICATIONS}
+                value={form.glpMed}
+                onSelect={(v) => {
+                  if (v !== form.glpMed) upd("glpDose", "");
+                  upd("glpMed", v);
+                }}
+              />
+              <button
+                type="button"
+                className="cta"
+                disabled={!form.glpMed}
                 onClick={() => goTo("s7b")}
               >
                 Continue
@@ -709,11 +740,10 @@ export default function WeightlossOnboardForm() {
             <div className="sc">
               <div className="slabel">Medication history</div>
               <div className="q">
-                What is the total dose of Tirzepatide (or similar medication) in mg you are
-                currently using?
+                What dose of {form.glpMed} are you taking or have you taken?
               </div>
               <Radio
-                options={TIRZEPATIDE_DOSES}
+                options={MEDICATION_DOSES[form.glpMed as GlpMedication] ?? []}
                 value={form.glpDose}
                 onSelect={(v) => upd("glpDose", v)}
               />
@@ -731,7 +761,7 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={!form.glpDose}
-                onClick={() => goTo("s7c")}
+                onClick={() => goTo("s7a")}
               >
                 Continue
               </button>
@@ -763,9 +793,8 @@ export default function WeightlossOnboardForm() {
             <div className="sc">
               <div className="slabel">Medication history</div>
               <div className="q" style={{ fontSize: 17, fontWeight: 600 }}>
-                If you have a picture available of your current vial, please upload a picture of
-                your prescription (make sure that your name and the dosing instructions are
-                visible). If not immediately available, please move on with the intake.
+                 If you have a photo of your current medication or prescription, you can upload it here.
+                  Please make sure your name and dosing details are visible.
               </div>
               <label className="cta2 upload-btn">
                 ⬆ Upload file
@@ -787,11 +816,9 @@ export default function WeightlossOnboardForm() {
 
           {screen === "s7e" && (
             <div className="sc">
-              <div className="step-of">Step 1 of 3</div>
-              <div className="q">Upload a photo ID</div>
+              <div className="q">ID Upload</div>
               <div className="qs">
-                Take or upload an image of a government-issued photo ID, like a driver&apos;s
-                license or passport.
+                Please upload a government-issued photo ID
               </div>
               <div className="id-illus" aria-hidden>🪪</div>
               <div className="tips-card">
@@ -840,7 +867,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s9" && (
             <div className="sc">
               <div className="slabel">Weight history</div>
-              <div className="q">Have you had any of the following bariatric procedures?</div>
+              <div className="q">Have you had any weight loss surgery in the past?</div>
               <div className="qs">Select all that apply.</div>
               <Multi
                 options={BARIATRIC_PROCEDURES}
@@ -875,7 +902,7 @@ export default function WeightlossOnboardForm() {
             return (
               <div className="sc">
                 <div className="q">
-                  Provide the approximate date of your {list} {word}.
+                  When was your {list} {word}?
                 </div>
                 <textarea
                   className="inp"
@@ -898,10 +925,9 @@ export default function WeightlossOnboardForm() {
             <div className="sc">
               <div className="slabel">Medical history</div>
               <div className="q">
-                Have you ever been diagnosed with any of the following conditions related to weight?
+                Have you been diagnosed with any of these health conditions?
               </div>
               <div className="qs">
-                This information helps determine whether GLP-1 treatment is appropriate for you.
                 Select all that apply.
               </div>
               <Multi
@@ -923,12 +949,12 @@ export default function WeightlossOnboardForm() {
           {screen === "s11" && (
             <div className="sc">
               <div className="slabel">Medical history</div>
-              <div className="q">Do you have any of these other health conditions?</div>
+              <div className="q">Do you have any other health conditions we should know about?</div>
               <div className="qs">Select all that apply.</div>
               <Multi
                 options={OTHER_CONDITIONS}
                 values={form.s11}
-                onToggle={(v) => toggleExclusive("s11", v, "None of the above")}
+                onToggle={(v) => toggleExclusive("s11", v, "None")}
               />
               <input
                 className="inp"
@@ -951,14 +977,14 @@ export default function WeightlossOnboardForm() {
           {screen === "s12" && (
             <div className="sc">
               <div className="slabel">Safety screening</div>
-              <div className="q">Are you currently being treated for any of the following?</div>
+              <div className="q">Are you currently dealing with any of the following?</div>
               <div className="qs">
-                This information helps us ensure treatment is safe for you. Select all that apply.
+                Select all that apply.
               </div>
               <Multi
                 options={SAFETY_TREATMENTS}
                 values={form.s12}
-                onToggle={(v) => toggleExclusive("s12", v, "None of these")}
+                onToggle={(v) => toggleExclusive("s12", v, "None")}
               />
               <button
                 type="button"
@@ -975,7 +1001,7 @@ export default function WeightlossOnboardForm() {
             <div className="sc">
               <div className="slabel">Safety screening</div>
               <div className="q">
-                Have you or a family member been diagnosed with medullary thyroid cancer or MEN2 syndrome?
+                Have you or a close family member had medullary thyroid cancer or MEN2 syndrome?
               </div>
               <Radio
                 options={NO_YES_UNSURE}
@@ -986,7 +1012,27 @@ export default function WeightlossOnboardForm() {
                 type="button"
                 className="cta"
                 disabled={!form.s13}
-                onClick={() => goTo(form.s13 === "Yes" ? "dHard" : "s14")}
+                onClick={() => goTo(form.s13 === "Yes" ? "dHard" : "s13a")}
+              >
+                Continue
+              </button>
+            </div>
+          )}
+
+          {screen === "s13a" && (
+            <div className="sc">
+              <div className="slabel">Safety screening</div>
+              <div className="q">What was your sex assigned at birth?</div>
+              <Radio
+                options={SEX_OPTIONS}
+                value={form.sexAtBirth}
+                onSelect={(v) => upd("sexAtBirth", v)}
+              />
+              <button
+                type="button"
+                className="cta"
+                disabled={!form.sexAtBirth}
+                onClick={() => goTo(form.sexAtBirth === "Male" ? "s15" : "s14")}
               >
                 Continue
               </button>
@@ -996,7 +1042,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s14" && (
             <div className="sc">
               <div className="slabel">Safety screening</div>
-              <div className="q">Are you pregnant, trying to conceive, or currently breastfeeding?</div>
+              <div className="q">Are you pregnant, planning to become pregnant, or breastfeeding?</div>
               <Radio
                 options={NO_YES}
                 value={form.s14}
@@ -1044,7 +1090,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s15" && (
             <div className="sc">
               <div className="slabel">Safety screening</div>
-              <div className="q">Have you ever been diagnosed with pancreatitis?</div>
+              <div className="q">Have you ever had pancreatitis?</div>
               <Radio
                 options={NO_YES}
                 value={form.s15}
@@ -1064,7 +1110,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s16" && (
             <div className="sc">
               <div className="slabel">Lifestyle</div>
-              <div className="q">How many alcoholic drinks do you consume in an average week?</div>
+              <div className="q">How many alcoholic drinks do you have in a week?</div>
               <Radio
                 options={ALCOHOL_FREQUENCY}
                 value={form.s16}
@@ -1084,10 +1130,9 @@ export default function WeightlossOnboardForm() {
           {screen === "s17" && (
             <div className="sc">
               <div className="slabel">Lifestyle</div>
-              <div className="q">Do you use any of the following recreational drugs?</div>
+              <div className="q">Do you use any recreational drugs?</div>
               <div className="qs">
-                To ensure your safety, please let us know. All your information is confidential — we
-                just need it to provide the safest advice.
+                Your answer is private.
               </div>
               <Multi
                 options={RECREATIONAL_DRUGS}
@@ -1108,7 +1153,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s18" && (
             <div className="sc">
               <div className="slabel">Lifestyle</div>
-              <div className="q">Tell us about your daily habits</div>
+              <div className="q">Can you tell us a bit about your daily routine and habits?</div>
               <div className="qs">This helps your doctor build the right plan for you.</div>
               <div className="r2">
                 <Select
@@ -1330,13 +1375,6 @@ export default function WeightlossOnboardForm() {
                   onChange={(e) => upd("zip", e.target.value)}
                 />
               </div>
-              <Select
-                style={{ marginTop: 8 }}
-                placeholder="Sex assigned at birth"
-                options={SEX_OPTIONS}
-                value={form.sex}
-                onChange={(v) => upd("sex", v)}
-              />
               <input
                 className="inp"
                 type="tel"
@@ -1368,7 +1406,7 @@ export default function WeightlossOnboardForm() {
           {screen === "s22" && (
             <div className="sc">
               <div className="slabel">Medications</div>
-              <div className="q">Are you taking any medications or supplements?</div>
+              <div className="q">Are you currently taking any medications or supplements?</div>
               <div className="qs">Include all prescriptions, OTC medications, and supplements.</div>
               <textarea
                 className="inp"
@@ -1377,7 +1415,7 @@ export default function WeightlossOnboardForm() {
                 onChange={(e) => upd("meds", e.target.value)}
               />
               <div className="q" style={{ fontSize: 16, marginBottom: 6 }}>
-                Any known allergies?
+                Do you have any allergies?
               </div>
               <input
                 className="inp"
@@ -1387,7 +1425,7 @@ export default function WeightlossOnboardForm() {
                 onChange={(e) => upd("allergies", e.target.value)}
               />
               <div className="q" style={{ fontSize: 16, marginBottom: 6 }}>
-                Preferred pharmacy
+                Which pharmacy would you like to use?
               </div>
               <input
                 className="inp"
@@ -1404,7 +1442,7 @@ export default function WeightlossOnboardForm() {
 
           {screen === "s23" && (
             <div className="sc">
-              <div className="q">Book your consultation</div>
+              <div className="q">When would you like to schedule your consultation?</div>
               <div className="qs">
                 Choose a time that works for you. Appointments are 15–20 minutes with a licensed
                 physician.
@@ -1432,6 +1470,96 @@ export default function WeightlossOnboardForm() {
               >
                 Confirm appointment
               </button>
+            </div>
+          )}
+
+          {screen === "sPlan" && (() => {
+            const active = PLANS.find((p) => p.id === form.plan) ?? PLANS[0];
+            const fmtSave = (n: number) =>
+              n < 0 ? `Save $-${Math.abs(n)}` : `Save $${n}`;
+            return (
+              <div className="sc">
+                <div className="slabel">Choose your plan</div>
+                <div className="plan-card">
+                  <div className="plan-tabs">
+                    {PLANS.map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        className={`plan-tab ${active.id === p.id ? "active" : ""}`}
+                        onClick={() => upd("plan", p.id)}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="plan-price-row">
+                    <div className="plan-price-col">
+                      <div className="plan-old">${active.oldMonthly}/mo</div>
+                      <div className="plan-new">
+                        <span className="plan-new-amt">${active.monthly}</span>
+                        <span className="plan-new-suffix">/mo</span>
+                      </div>
+                    </div>
+                    <div className="plan-save">{fmtSave(active.save)}</div>
+                  </div>
+
+                  <ul className="plan-bullets">
+                    {PLAN_BENEFITS.map((b) => (
+                      <li key={b}>
+                        <span className="plan-tick">✓</span>
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="plan-divider" />
+
+                  <div className="plan-meds-title">Medication options</div>
+                  <div className="plan-meds">
+                    {MEDICATION_ADDONS.map((m) => (
+                      <div key={m.label} className="plan-med-row">
+                        <span className={`plan-med-icon ${m.pill ? "pill" : "skin"}`} aria-hidden>
+                          {m.pill ? "💊" : "🧴"}
+                        </span>
+                        <span className="plan-med-label">{m.label}</span>
+                        {m.price && <span className="plan-med-price">{m.price}</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="cta cta-plan"
+                  onClick={() => goTo("sPay")}
+                >
+                  Continue
+                </button>
+              </div>
+            );
+          })()}
+
+          {screen === "sPay" && (
+            <div className="sc">
+              <div className="slabel">Payment</div>
+              <div className="q">Secure your plan</div>
+              <div className="qs">
+                Complete your one-time payment to activate your{" "}
+                {selectedPlan?.label ?? "plan"}.
+              </div>
+              <StripePayment
+                email={form.email}
+                name={`${form.firstName} ${form.lastName}`.trim()}
+                zip={form.zip}
+                plan={form.plan}
+                planLabel={selectedPlan?.label ?? ""}
+                onSuccess={() => {
+                  upd("paid", true);
+                  goTo("iConfirm");
+                }}
+              />
             </div>
           )}
 

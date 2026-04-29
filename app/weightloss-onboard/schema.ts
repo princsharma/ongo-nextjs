@@ -2,11 +2,11 @@ import { z } from "zod";
 
 export const screenIds = [
   "s1", "s2", "s3", "iGood", "iRoad",
-  "s4", "s5", "s6", "s7", "s7a", "s7b", "s7c", "s7d", "s7e",
+  "s4", "s5", "s6", "s7", "s7m", "s7b", "s7a", "s7c", "s7d", "s7e",
   "s9", "s9b",
-  "s10", "s11", "s12", "s13", "s14", "s14b", "s15",
+  "s10", "s11", "s12", "s13", "s13a", "s14", "s14b", "s15",
   "s16", "s17", "s18", "s19", "s20",
-  "s21", "s22", "s23",
+  "s21", "s22", "s23", "sPlan", "sPay",
   "iConfirm", "iThanks", "dHard",
 ] as const;
 
@@ -15,10 +15,10 @@ export type ScreenId = (typeof screenIds)[number];
 export const numberedScreens = [
   "s1", "s2", "s3", "s20",
   "s4", "s5", "s6",
-  "s7", "s7a", "s7b", "s7c", "s7d", "s7e",
+  "s7", "s7m", "s7b", "s7a", "s7c", "s7d", "s7e",
   "s9",
-  "s10", "s11", "s12", "s13", "s14", "s15", "s16", "s17",
-  "s18", "s19", "s21", "s22", "s23",
+  "s10", "s11", "s12", "s13", "s13a", "s14", "s15", "s16", "s17",
+  "s18", "s19", "s21", "s22", "s23", "sPlan", "sPay",
 ] as const satisfies readonly ScreenId[];
 
 export const noBackScreens: ReadonlySet<ScreenId> = new Set([
@@ -46,6 +46,7 @@ export const formSchema = z.object({
 
   s7: z.string(),
   glpExperience: z.string(),
+  glpMed: z.string(),
   glpDose: z.string(),
   glpDoseDetails: z.string(),
   glpLastInjection: z.string(),
@@ -84,7 +85,7 @@ export const formSchema = z.object({
   lastName: z.string(),
   dob: z.string(),
   zip: z.string(),
-  sex: z.string(),
+  sexAtBirth: z.string(),
   phone: z.string(),
   address: z.string(),
 
@@ -93,6 +94,8 @@ export const formSchema = z.object({
   pharmacy: z.string(),
 
   slot: z.string(),
+  plan: z.string(),
+  paid: z.boolean(),
 });
 
 export type Form = z.infer<typeof formSchema>;
@@ -114,6 +117,7 @@ export const initialForm: Form = {
   s6: [],
   s7: "",
   glpExperience: "",
+  glpMed: "",
   glpDose: "",
   glpDoseDetails: "",
   glpLastInjection: "",
@@ -146,11 +150,13 @@ export const initialForm: Form = {
   lastName: "",
   dob: "",
   zip: "",
-  sex: "",
+  sexAtBirth: "",
   phone: "",
   address: "",
   meds: "",
   allergies: "",
   pharmacy: "",
   slot: "",
+  plan: "1m",
+  paid: false,
 };

@@ -554,6 +554,223 @@
 .wlf-root .cta.cta-cap { background: #2D6A4F; }
 .wlf-root .cta.cta-cap:not(:disabled):hover { background: #245a40; }
 
+/* Plan selection screen */
+.wlf-root .plan-card {
+  background: #fff;
+  border: 1.5px solid #d8e7dd;
+  border-radius: 18px;
+  padding: 18px 18px 22px;
+  margin-bottom: 16px;
+}
+.wlf-root .plan-tabs {
+  display: inline-flex;
+  background: #d8efdf;
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 18px;
+}
+.wlf-root .plan-tab {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2D6A4F;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+.wlf-root .plan-tab.active {
+  background: #fff;
+  color: #1a1a1a;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+}
+.wlf-root .plan-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.wlf-root .plan-old {
+  font-size: 14px;
+  color: #999;
+  text-decoration: line-through;
+  margin-bottom: 4px;
+}
+.wlf-root .plan-new {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+.wlf-root .plan-new-amt {
+  font-size: 44px;
+  font-weight: 800;
+  color: #111;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.wlf-root .plan-new-suffix {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+.wlf-root .plan-save {
+  background: #d8efdf;
+  color: #2D6A4F;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+.wlf-root .plan-bullets {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.wlf-root .plan-bullets li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: #1a1a1a;
+  padding: 5px 0;
+  line-height: 1.45;
+}
+.wlf-root .plan-tick {
+  color: #2D6A4F;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.wlf-root .plan-divider {
+  height: 1px;
+  background: rgba(0,0,0,0.08);
+  margin: 14px 0 14px;
+}
+.wlf-root .plan-meds-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 10px;
+}
+.wlf-root .plan-meds {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wlf-root .plan-med-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #1a1a1a;
+}
+.wlf-root .plan-med-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  background: #d8efdf;
+}
+.wlf-root .plan-med-label { flex: 1; }
+.wlf-root .plan-med-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.wlf-root .cta.cta-plan { background: #1d4732; }
+.wlf-root .cta.cta-plan:not(:disabled):hover { background: #163524; }
+
+/* Stripe payment screen */
+.wlf-root .pay-form { display: flex; flex-direction: column; flex: 1; }
+.wlf-root .pay-summary {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.wlf-root .pay-summary-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 15px;
+  color: #111;
+}
+.wlf-root .pay-summary-row strong {
+  font-size: 22px;
+  font-weight: 800;
+  color: #2D6A4F;
+}
+.wlf-root .pay-summary-note {
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.wlf-root .pay-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: #777;
+  margin: 8px 0 5px;
+}
+.wlf-root .pay-field {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 6px;
+  transition: border-color .12s, box-shadow .12s;
+}
+.wlf-root .pay-field.StripeElement--focus { border-color: #2D6A4F; box-shadow: 0 0 0 3px rgba(45,106,79,0.15); }
+.wlf-root .pay-field.StripeElement--invalid { border-color: #c4302b; }
+.wlf-root .pay-secure {
+  font-size: 12px;
+  color: #888;
+  margin: 14px 0 10px;
+  text-align: center;
+  line-height: 1.5;
+}
+.wlf-root .cta.cta-pay {
+  background: #2D6A4F;
+  margin-top: auto;
+}
+.wlf-root .cta.cta-pay:not(:disabled):hover { background: #245a40; }
+.wlf-root .pay-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 36px 0;
+  color: #666;
+  font-size: 14px;
+}
+.wlf-root .pay-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(45,106,79,0.2);
+  border-top-color: #2D6A4F;
+  border-radius: 50%;
+  animation: pay-spin .8s linear infinite;
+}
+@keyframes pay-spin {
+  to { transform: rotate(360deg); }
+}
+.wlf-root .pay-fatal { margin: 24px 0; text-align: center; }
+
 /* BMI screen — gauge */
 .wlf-root .bmi-gauge-wrap {
   position: relative;
