@@ -1137,12 +1137,23 @@ export default function WeightlossOnboardForm() {
               <Multi
                 options={RECREATIONAL_DRUGS}
                 values={form.s17}
-                onToggle={(v) => toggleExclusive("s17", v, "I don't use recreational drugs")}
+                onToggle={(v) => toggleExclusive("s17", v, "I don't use any")}
               />
+              {form.s17.includes("Other") && (
+                <textarea
+                  className="inp"
+                  placeholder="Please specify"
+                  value={form.s17Other}
+                  onChange={(e) => upd("s17Other", e.target.value)}
+                />
+              )}
               <button
                 type="button"
                 className="cta"
-                disabled={form.s17.length === 0}
+                disabled={
+                  form.s17.length === 0 ||
+                  (form.s17.includes("Other") && !form.s17Other.trim())
+                }
                 onClick={() => goTo("s18")}
               >
                 Continue

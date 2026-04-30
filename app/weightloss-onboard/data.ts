@@ -140,8 +140,8 @@ export const OTHER_CONDITIONS = [
 ] as const;
 
 export const SAFETY_TREATMENTS = [
-  "Eating disorder (Anorexia, Nervosa, or other) in the past year",
-  "Suicidal thoughts or attempts in the past year",
+  "Eating disorder (Anorexia, Nervosa, or other)",
+  "Suicidal thoughts or attempts",
   "Gallbladder disease",
   "Allergy to GLP-1 medications",
   "Serious digestive issues",

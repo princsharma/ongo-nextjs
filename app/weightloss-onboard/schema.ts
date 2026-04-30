@@ -66,6 +66,7 @@ export const formSchema = z.object({
 
   s16: z.string(),
   s17: z.array(z.string()),
+  s17Other: z.string(),
 
   meals: z.string(),
   exercise: z.string(),
@@ -135,6 +136,7 @@ export const initialForm: Form = {
   s15: "",
   s16: "",
   s17: [],
+  s17Other: "",
   meals: "",
   exercise: "",
   sleep: "",
